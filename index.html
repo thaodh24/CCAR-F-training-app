@@ -110,6 +110,35 @@ input[type=range]{width:100%;accent-color:var(--brand)}
 .hint{background:var(--warn-soft);color:var(--warn);border-radius:14px;padding:12px 14px;font-size:.92rem}
 .center{text-align:center}
 a{color:var(--brand)}
+.iconbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);width:42px;height:42px;border-radius:50%;font-size:1.2rem;display:grid;place-items:center;flex:none}
+.iconbtn.sm{width:30px;height:30px;font-size:.85rem;border:0;background:transparent;color:inherit}
+.hero{display:flex;gap:16px;align-items:center}
+.ringwrap{position:relative;width:132px;height:132px;flex:none}
+.ringtxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ringtxt b{font-size:2rem;line-height:1}.ringtxt span{font-size:.75rem;color:var(--muted)}
+.stats3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.stats3>div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center;display:flex;flex-direction:column}
+.stats3 b{font-size:1.15rem}.stats3 small{font-size:.75rem;color:var(--muted);font-weight:500}.stats3 span{font-size:.72rem;color:var(--muted)}
+button.card{width:100%;text-align:left;font:inherit;color:var(--ink);cursor:pointer}
+.next{display:flex;flex-direction:column;gap:2px;border-color:var(--brand);background:var(--brand-soft)}
+.next b{font-size:1.08rem;color:var(--brand)}
+.drow{display:grid;grid-template-columns:1fr auto;gap:4px 10px;align-items:center;width:100%;border:0;background:none;font:inherit;color:var(--ink);text-align:left;padding:9px 0;border-bottom:1px solid var(--line)}
+.drow:last-of-type{border-bottom:0}
+.drow .dl{font-size:.92rem}.drow .dv{font-weight:700;font-size:.92rem}
+.drow .bar{grid-column:1 / -1;height:6px}
+.drow.pick1.sel .dl b,.drow.pick1.sel .dl{color:var(--brand);font-weight:700}
+.drow.pick1.sel{background:var(--brand-soft);border-radius:10px;padding-left:8px;padding-right:8px}
+.mocks4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.mocks4 button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;font:inherit}
+.mocks4 b{font-size:1.1rem}.okc{color:var(--ok)}.badc{color:var(--bad)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);background:var(--line);border-radius:12px;padding:3px;gap:3px;margin-top:12px}
+.seg button{border:0;background:none;border-radius:9px;padding:9px;font:inherit;font-weight:600;color:var(--muted)}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+.vnbox{background:var(--vn-soft);color:var(--vn);border-radius:12px;padding:10px 12px;margin:4px 0 12px;font-size:.93rem}
+.vnbox summary{color:var(--vn)}
+.vnbox p{margin:6px 0}
+.expl.good{border-left-color:var(--ok);background:var(--ok-soft)}.expl.badx{border-left-color:var(--bad);background:var(--bad-soft)}
+.scen{margin:2px 0 8px}.scen summary{color:var(--muted)}
 select{font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
 </style>
 </head>
@@ -213,26 +242,30 @@ function render() {
 }
 
 /* ========== Shared question renderer ========== */
-function vnBtn() { return `<button class="chip ${S.showVN ? "on" : ""}" id="vnT">🇻🇳 VN ${S.showVN ? "on" : "off"}</button>`; }
+function vnBtn() { return `<button class="chip ${S.showVN ? "on" : ""}" id="vnT" aria-label="Vietnamese">VN</button>`; }
 function bindVN(after) { const b = $("#vnT"); if (b) b.onclick = () => { S.showVN = !S.showVN; save(); after(); }; }
+// English stays clean; the Vietnamese translation sits in one folded block under the options.
 function qHTML(q, picked, checked) {
-  const sc = SCEN[q.s], multi = q.a.length > 1;
-  return `<details class="small"><summary>Scenario: ${esc(sc.n)}</summary><p>${fmt(sc.d)}</p>${S.showVN ? `<p class="vn">${fmt(sc.dv)}</p>` : ""}</details>
-  <p class="q">${fmt(q.q)}</p>${S.showVN ? `<p class="vn">${fmt(q.vi)}</p>` : ""}
-  ${multi ? `<p><span class="tag warn">Choose TWO · chọn 2 đáp án</span></p>` : ""}
+  const multi = q.a.length > 1;
+  return `<p class="q">${fmt(q.q)}</p>
+  ${multi ? `<p><span class="tag warn">Choose TWO · chọn 2</span></p>` : ""}
   <div class="opts">${q.o.map((o, k) => {
     let cls = picked.includes(k) ? "pick" : "";
     if (checked) cls = q.a.includes(k) ? "right" : (picked.includes(k) ? "wrong" : "");
-    return `<button class="opt ${cls}" data-k="${k}" ${checked ? "disabled" : ""}><b class="l">${LET[k]}</b><span>${fmt(o)}${S.showVN ? `<span class="vn">${fmt(q.ov[k])}</span>` : ""}</span></button>`;
-  }).join("")}</div>`;
+    return `<button class="opt ${cls}" data-k="${k}" ${checked ? "disabled" : ""}><b class="l">${LET[k]}</b><span>${fmt(o)}</span></button>`;
+  }).join("")}</div>
+  ${S.showVN ? `<details class="vnbox" ${S.vnOpen ? "open" : ""}><summary>Bản dịch tiếng Việt</summary>
+    <p>${fmt(q.vi)}</p>${q.ov.map((o, k) => `<p><b>${LET[k]}.</b> ${fmt(o)}</p>`).join("")}</details>` : ""}`;
 }
+function bindVNBox() { document.querySelectorAll(".vnbox").forEach(d => d.ontoggle = () => { S.vnOpen = d.open; save(); }); }
 function explHTML(q, picked) {
   const ok = sameSet(picked, q.a);
-  return `<div class="expl"><p><span class="tag ${ok ? "ok" : "bad"}">${ok ? "Đúng rồi ✓" : "Chưa đúng ✗"}</span>
-   <b> Đáp án: ${q.a.map(k => LET[k]).join(", ")}</b></p><p>${fmt(q.e)}</p>${S.showVN ? `<p class="vn">${fmt(q.ev)}</p>` : ""}</div>`;
+  return `<div class="expl ${ok ? "good" : "badx"}"><p><b>${ok ? "✓ Đúng rồi" : "✗ Chưa đúng"}</b> · Đáp án ${q.a.map(k => LET[k]).join(", ")}</p>
+   ${S.showVN ? `<p>${fmt(q.ev)}</p><details><summary>English</summary><p>${fmt(q.e)}</p></details>` : `<p>${fmt(q.e)}</p>`}</div>`;
 }
 function bindOpts(q, picked, onChange) {
   const multi = q.a.length > 1;
+  bindVNBox();
   document.querySelectorAll(".opt").forEach(b => b.onclick = () => {
     const k = +b.dataset.k;
     if (multi) { const i = picked.indexOf(k); if (i >= 0) picked.splice(i, 1); else { if (picked.length >= 2) picked.shift(); picked.push(k); } }
@@ -241,68 +274,103 @@ function bindOpts(q, picked, onChange) {
   });
 }
 
-/* ========== Home ========== */
+/* ========== Home: progress + analysis only ========== */
+function estimate() {   // weighted by the exam blueprint, only once there is enough data
+  const ds = domainStats(); let w = 0, acc = 0, n = 0;
+  Object.keys(DOMAINS).forEach(d => { const x = ds[d]; n += x.n; if (x.n) { w += DOMAINS[d][2]; acc += DOMAINS[d][2] * x.c / x.n; } });
+  return n >= 20 ? Math.round(acc / w * 1000) : null;
+}
+function ring(val, max, color) {
+  const r = 52, c = 2 * Math.PI * r, f = val == null ? 0 : Math.min(1, val / max);
+  return `<svg viewBox="0 0 120 120" width="132" height="132" aria-hidden="true"><circle cx="60" cy="60" r="${r}" fill="none" stroke="var(--line)" stroke-width="10"/>
+    <circle cx="60" cy="60" r="${r}" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round" stroke-dasharray="${c * f} ${c}" transform="rotate(-90 60 60)"/>
+    <line x1="60" y1="2" x2="60" y2="14" stroke="var(--muted)" stroke-width="2" transform="rotate(${PASS / 1000 * 360} 60 60)"/></svg>`;
+}
+function nextStep(ds) {
+  const due = dueQs().length;
+  if (due) return {t: `Ôn ${due} câu sai đến hạn`, s: "Ôn lại đúng lúc sắp quên giúp nhớ lâu hơn.", go: () => startPractice({review: true})};
+  const tried = Object.keys(DOMAINS).filter(d => ds[d].n);
+  const fresh = Object.keys(DOMAINS).find(d => !ds[d].n);
+  if (fresh && tried.length < 5) return {t: `Luyện 10 câu D${fresh}`, s: `${DOMAINS[fresh][1]}: bạn chưa làm câu nào.`, go: () => { pf = {d: +fresh, s: "", size: 10}; startPractice({}); }};
+  const weak = tried.sort((a, b) => ds[a].c / ds[a].n - ds[b].c / ds[b].n)[0];
+  const mocksDone = EXAMS.filter(x => (mk(x.id).attempts || []).length).length;
+  if (ALL.filter(q => S.qs[q.id]).length >= 120 && mocksDone < 4) { const id = EXAMS.find(x => !(mk(x.id).attempts || []).length).id;
+    return {t: `Làm Mock ${id}`, s: "60 câu, 120 phút, giống thi thật.", go: () => go({tab: "mock"})}; }
+  return {t: `Luyện 10 câu D${weak}`, s: `Domain yếu nhất: ${DOMAINS[weak][1]} (${pct(ds[weak].c, ds[weak].n)}%).`, go: () => { pf = {d: +weak, s: "", size: 10}; startPractice({}); }};
+}
 function Home() {
-  const due = dueQs().length, cdue = dueCards().length, ds = domainStats();
-  const seen = ALL.filter(q => S.qs[q.id]).length;
+  const ds = domainStats(), est = estimate(), ready = readiness(), step = nextStep(ds);
+  const seen = ALL.filter(q => S.qs[q.id]).length, known = GLOSS.filter(g => (S.cards[cardKey(g)] || {}).box >= 3).length;
   const standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
-  const ready = readiness();
+  const color = est == null ? "var(--line)" : est >= 800 ? "var(--ok)" : est >= PASS ? "var(--warn)" : "var(--bad)";
+  const tried = Object.keys(DOMAINS).filter(d => ds[d].n), weakest = tried.length ? tried.sort((a, b) => ds[a].c / ds[a].n - ds[b].c / ds[b].n)[0] : null;
   $("#app").innerHTML = `
-  <h1>CCAR-F Practice</h1>
-  <p class="muted small">Câu hỏi tự soạn để luyện tập, không phải câu hỏi thi thật (NOT real exam questions).</p>
-  ${standalone ? "" : `<div class="hint">📲 <b>Cài lên iPhone:</b> mở trang này bằng Safari, bấm nút Share (hình vuông có mũi tên), chọn <b>Add to Home Screen</b> (Thêm vào MH chính). App sẽ chạy offline, full màn hình.</div>`}
-  <div class="grid2" style="margin-top:10px">
-    <div class="card"><div class="muted small">Streak (ngày học liên tục)</div><div class="stat">🔥 ${streak()}</div></div>
-    <div class="card"><div class="muted small">Đã làm (câu khác nhau)</div><div class="stat">${seen}<span class="muted small"> / ${ALL.length}</span></div></div>
+  <div class="row" style="justify-content:space-between;margin-top:6px"><h1 style="margin:0">Tiến độ</h1>
+    <button class="iconbtn" id="hSet" aria-label="Cài đặt">⚙︎</button></div>
+  ${standalone || S.hideInstall ? "" : `<div class="hint row" style="justify-content:space-between"><span>📲 Safari → Share → <b>Add to Home Screen</b></span><button class="iconbtn sm" id="hHide" aria-label="Ẩn">✕</button></div>`}
+  <div class="card hero">
+    <div class="ringwrap">${ring(est, 1000, color)}<div class="ringtxt"><b>${est == null ? "–" : est}</b><span>/1000</span></div></div>
+    <div><div class="muted small">Điểm ước tính</div>
+      <p class="small" style="margin:4px 0 8px">${est == null ? "Làm ít nhất 20 câu để có ước tính." : est >= PASS ? "Trên mức đậu 720." : `Còn thiếu ${PASS - est} điểm để đậu.`}</p>
+      <span class="tag ${ready.cls}">${ready.short}</span></div>
   </div>
-  <h2>Hôm nay (today)</h2>
-  <div class="card row" style="justify-content:space-between"><div><h3>Ôn câu sai (review)</h3><p class="muted small">${due ? `${due} câu đến hạn ôn` : "Không có câu nào đến hạn 🎉"}</p></div>
-    <button class="btn" id="hRev" ${due ? "" : "disabled"}>Ôn ngay</button></div>
-  <div class="card row" style="justify-content:space-between"><div><h3>Flashcards</h3><p class="muted small">${cdue} thẻ cần ôn</p></div>
-    <button class="btn sec" id="hCards">Mở thẻ</button></div>
-  <div class="card row" style="justify-content:space-between"><div><h3>Nghe trên đường đi</h3><p class="muted small">Audio tiếng Việt: exam guide, bài học, câu hỏi</p></div>
-    <button class="btn sec" id="hListen">Nghe</button></div>
-  <h2>Độ chính xác theo domain</h2>
+  <div class="stats3">
+    <div><b>🔥 ${streak()}</b><span>ngày liên tục</span></div>
+    <div><b>${seen}<small>/${ALL.length}</small></b><span>câu đã làm</span></div>
+    <div><b>${known}<small>/${GLOSS.length}</small></b><span>thẻ đã thuộc</span></div>
+  </div>
+  <button class="card next" id="hNext"><span class="muted small">Nên làm tiếp</span><b>${step.t} →</b><span class="small muted">${step.s}</span></button>
+  <h2>Theo domain</h2>
   <div class="card">${Object.keys(DOMAINS).map(d => { const x = ds[d], p = pct(x.c, x.n);
-    return `<div style="margin:8px 0"><div class="row" style="justify-content:space-between"><span class="small"><b>D${d}</b> ${esc(DOMAINS[d][0])} <span class="muted">(${DOMAINS[d][2]}%)</span></span><b class="small">${x.n ? p + "%" : "–"}</b></div>
-    <div class="bar ${!x.n ? "" : p >= 80 ? "ok" : p >= 70 ? "warn" : "bad"}"><i style="width:${x.n ? p : 0}%"></i></div>
-    <div class="muted small">${DOMAINS[d][1]} · đã làm ${x.seen}/${x.total}</div></div>`; }).join("")}</div>
-  <h2>Sẵn sàng đi thi chưa? (readiness)</h2>
-  <div class="card"><p><span class="tag ${ready.cls}">${ready.label}</span></p>
-    ${ready.lines.map(l => `<p class="small">${l}</p>`).join("")}
-    <p class="muted small">Quy tắc: Mock 3 và Mock 4 (lần làm đầu, tắt VN) đều ≥ 800/1000 và không domain nào dưới 70%.</p></div>
-  <h2>Cài đặt (settings)</h2>
-  <div class="card">
-    <div class="switch"><span>Hiện tiếng Việt (show Vietnamese)</span><button class="toggle ${S.showVN ? "on" : ""}" id="sVN" aria-label="VN"></button></div>
-    <div class="switch"><span>Giao diện (theme)</span><select id="sTheme"><option value="">Theo máy (auto)</option><option value="light">Sáng (light)</option><option value="dark">Tối (dark)</option></select></div>
-    <div class="grid2" style="margin-top:8px"><button class="btn sec" id="sExp">⬇︎ Export backup</button><button class="btn sec" id="sImp">⬆︎ Import backup</button></div>
+    return `<button class="drow" data-hd="${d}"><span class="dl"><b>D${d}</b> ${esc(DOMAINS[d][1])}${d === weakest && tried.length > 1 ? ' <span class="tag bad">yếu nhất</span>' : ""}</span>
+      <span class="dv">${x.n ? p + "%" : "–"}</span>
+      <span class="bar ${!x.n ? "" : p >= 80 ? "ok" : p >= 70 ? "warn" : "bad"}"><i style="width:${x.n ? p : 0}%"></i></span></button>`; }).join("")}
+    <p class="muted small" style="margin:8px 0 0">Chạm vào một domain để luyện. Mục tiêu: mỗi domain ≥ 70%.</p></div>
+  <h2>Thi thử</h2>
+  <div class="mocks4">${EXAMS.map(x => { const a = (mk(x.id).attempts || []).slice(-1)[0];
+    return `<button data-hm="${x.id}"><span class="muted small">Mock ${x.id}</span><b class="${a ? (a.score >= PASS ? "okc" : "badc") : "muted"}">${a ? a.score : "–"}</b></button>`; }).join("")}</div>
+  <p class="muted small">${ready.hint}</p>`;
+  $("#hNext").onclick = step.go;
+  $("#hSet").onclick = settingsSheet;
+  if ($("#hHide")) $("#hHide").onclick = () => { S.hideInstall = 1; save(); Home(); };
+  document.querySelectorAll("[data-hd]").forEach(b => b.onclick = () => { pf = {d: +b.dataset.hd, s: "", size: 10}; startPractice({}); });
+  document.querySelectorAll("[data-hm]").forEach(b => b.onclick = () => go({tab: "mock"}));
+}
+function settingsSheet() {
+  const o = document.createElement("div"); o.className = "overlay";
+  o.innerHTML = `<div class="sheet"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Cài đặt</h3><button class="chip" id="sC">Đóng</button></div>
+    <div class="switch"><span>Hiện tiếng Việt</span><button class="toggle ${S.showVN ? "on" : ""}" id="sVN" aria-label="VN"></button></div>
+    <div class="switch"><span>Giao diện</span><select id="sTheme"><option value="">Theo máy</option><option value="light">Sáng</option><option value="dark">Tối</option></select></div>
+    <div class="grid2" style="margin-top:8px"><button class="btn sec" id="sExp">Export backup</button><button class="btn sec" id="sImp">Import backup</button></div>
     <input type="file" id="sFile" accept="application/json,.json" hidden>
-    <p class="muted small">Backup = file lưu tiến độ. Nên export mỗi tuần, lưu vào Files/iCloud.</p>
-    <button class="btn ghost block" id="sReset" style="margin-top:6px">Xoá toàn bộ tiến độ (reset)</button>
-    <p class="small" style="margin-top:10px"><a href="${PLAN_URL}" target="_blank" rel="noopener">Mở 9-day study plan ↗</a></p>
-  </div>`;
-  $("#hRev").onclick = () => startPractice({review: true});
-  $("#hCards").onclick = () => go({tab: "cards"});
-  $("#hListen").onclick = () => go({tab: "listen"});
-  $("#sVN").onclick = () => { S.showVN = !S.showVN; save(); Home(); };
-  $("#sTheme").value = S.theme || ""; $("#sTheme").onchange = e => { S.theme = e.target.value; save(); render(); };
-  $("#sExp").onclick = exportData;
-  $("#sImp").onclick = () => $("#sFile").click();
-  $("#sFile").onchange = importData;
-  $("#sReset").onclick = () => { if (confirm("Xoá toàn bộ tiến độ? Không hoàn tác được (cannot undo).")) { localStorage.removeItem(KEY); S = load(); render(); toast("Đã reset"); } };
+    <p class="muted small">Backup là file lưu tiến độ. Nên export mỗi tuần vào Files hoặc iCloud.</p>
+    <p class="small"><a href="${PLAN_URL}" target="_blank" rel="noopener">9-day study plan ↗</a></p>
+    <p class="muted small">Câu hỏi do tự soạn để luyện tập, không phải câu hỏi thi thật. Quy tắc sẵn sàng: Mock 3 và 4 (lần đầu, tắt VN) đều ≥ 800 và không domain nào dưới 70%.</p>
+    <button class="btn ghost block" id="sReset">Xoá toàn bộ tiến độ</button></div>`;
+  document.body.appendChild(o);
+  const close = () => { o.remove(); render(); };
+  o.onclick = e => { if (e.target === o) close(); };
+  o.querySelector("#sC").onclick = close;
+  o.querySelector("#sVN").onclick = e => { S.showVN = !S.showVN; save(); e.target.classList.toggle("on", S.showVN); };
+  const th = o.querySelector("#sTheme"); th.value = S.theme || ""; th.onchange = e => { S.theme = e.target.value; save(); document.documentElement.dataset.theme = S.theme; };
+  o.querySelector("#sExp").onclick = exportData;
+  o.querySelector("#sImp").onclick = () => o.querySelector("#sFile").click();
+  o.querySelector("#sFile").onchange = e => { importData(e); o.remove(); };
+  o.querySelector("#sReset").onclick = () => { if (confirm("Xoá toàn bộ tiến độ? Không hoàn tác được.")) { localStorage.removeItem(KEY); S = load(); close(); toast("Đã reset"); } };
 }
 function readiness() {
   const first = id => (S.mocks[id] && S.mocks[id].attempts || [])[0];
   const a3 = first(3), a4 = first(4), lines = [];
   [[3, a3], [4, a4]].forEach(([id, a]) => lines.push(a ? `Mock ${id}: <b>${a.score}</b>/1000 ${a.vn ? '<span class="tag vn">có bật VN</span>' : ""}` : `Mock ${id}: chưa làm`));
-  if (!a3 || !a4) return {cls: "", label: "Chưa đủ dữ liệu (làm Mock 3 và 4 trước)", lines};
+  if (!a3 || !a4) return {cls: "", label: "Chưa đủ dữ liệu", short: "Chưa làm Mock 3 và 4", hint: "Làm Mock 3 và 4 (tắt VN) để biết đã sẵn sàng đi thi chưa.", lines};
   const dm = {}; [a3, a4].forEach(a => Object.entries(a.dm).forEach(([d, [c, t]]) => { dm[d] = dm[d] || [0, 0]; dm[d][0] += c; dm[d][1] += t; }));
   const weak = Object.entries(dm).filter(([, [c, t]]) => c / t < .7).map(([d]) => "D" + d);
   if (weak.length) lines.push("Domain dưới 70%: <b>" + weak.join(", ") + "</b>");
   const min = Math.min(a3.score, a4.score);
-  if (min >= 800 && !weak.length && !a3.vn && !a4.vn) return {cls: "ok", label: "Sẵn sàng book lịch thi ✓", lines};
-  if (min >= 720) return {cls: "warn", label: "Gần đủ: học thêm 2–3 ngày", lines};
-  return {cls: "bad", label: "Chưa sẵn sàng: ôn lại domain yếu", lines};
+  const hint = weak.length ? "Domain dưới 70% trong Mock 3 và 4: " + weak.join(", ") + "." : "Mock 3 và 4 đều đã làm.";
+  if (min >= 800 && !weak.length && !a3.vn && !a4.vn) return {cls: "ok", label: "Sẵn sàng book lịch thi", short: "Sẵn sàng đi thi ✓", hint, lines};
+  if (min >= 720) return {cls: "warn", label: "Gần đủ", short: "Gần đủ, học thêm 2–3 ngày", hint, lines};
+  return {cls: "bad", label: "Chưa sẵn sàng", short: "Chưa sẵn sàng", hint, lines};
 }
 function exportData() {
   const blob = new Blob([JSON.stringify({app: "ccarf-practice", v: 1, at: new Date().toISOString(), data: S})], {type: "application/json"});
@@ -325,25 +393,22 @@ let P = null;   // current practice session
 let pf = {d: 0, s: "", size: 10};
 function Practice() {
   if (P) return practiceQ();
-  const due = dueQs().length, wrong = wrongDeck().length;
-  const pool = practicePool();
-  $("#app").innerHTML = `<h1>Luyện tập (practice)</h1>
-   <p class="muted small">Trả lời từng câu, xem đáp án và giải thích ngay. Câu sai sẽ tự vào danh sách ôn (spaced repetition: ôn ngắt quãng 1, 3, 7, 14 ngày).</p>
-   <div class="card"><div class="row" style="justify-content:space-between"><div><h3>Ôn câu sai</h3><p class="muted small">${due} đến hạn · ${wrong} trong danh sách</p></div>
-     <button class="btn" id="pRev" ${due ? "" : "disabled"}>Ôn ${due || ""}</button></div></div>
+  const due = dueQs().length, pool = practicePool(), ds = domainStats();
+  $("#app").innerHTML = `<h1>Luyện tập</h1>
+   ${due ? `<button class="card next" id="pRev"><span class="muted small">Đến hạn ôn</span><b>Ôn ${due} câu sai →</b></button>` : ""}
    <h2>Chọn domain</h2>
-   <div class="chips">${[0, 1, 2, 3, 4, 5].map(d => `<button class="chip ${pf.d === d ? "on" : ""}" data-d="${d}">${d ? "D" + d : "Tất cả"}</button>`).join("")}</div>
-   ${pf.d ? `<p class="muted small">${esc(DOMAINS[pf.d][0])} · ${DOMAINS[pf.d][1]}</p>` : ""}
-   <h2>Chọn scenario</h2>
-   <div class="chips"><button class="chip ${!pf.s ? "on" : ""}" data-s="">Tất cả</button>${Object.keys(SCEN).map(s => `<button class="chip ${pf.s === s ? "on" : ""}" data-s="${s}">${esc(SCEN[s].n)}</button>`).join("")}</div>
-   <h2>Số câu</h2>
-   <div class="chips">${[10, 20, 30].map(n => `<button class="chip ${pf.size === n ? "on" : ""}" data-n="${n}">${n} câu</button>`).join("")}</div>
-   <button class="btn block" id="pGo" style="margin-top:14px" ${pool.length ? "" : "disabled"}>Bắt đầu (${Math.min(pf.size, pool.length)} câu)</button>
-   <p class="muted small center">Ưu tiên câu chưa làm, sau đó tới câu hay sai. Có ${pool.length} câu phù hợp.</p>`;
+   <div class="card">${[0, 1, 2, 3, 4, 5].map(d => `<button class="drow pick1 ${pf.d === d ? "sel" : ""}" data-d="${d}">
+      <span class="dl">${d ? `<b>D${d}</b> ${esc(DOMAINS[d][1])}` : "<b>Tất cả domain</b>"}</span>
+      <span class="dv">${d ? (ds[d].n ? pct(ds[d].c, ds[d].n) + "%" : "–") : ""}</span></button>`).join("")}</div>
+   <div class="seg">${[10, 20, 30].map(n => `<button class="${pf.size === n ? "on" : ""}" data-n="${n}">${n} câu</button>`).join("")}</div>
+   <details class="small" style="margin:10px 2px"><summary>Lọc theo scenario${pf.s ? ": " + esc(SCEN[pf.s].n) : ""}</summary>
+     <div class="chips" style="flex-wrap:wrap;margin-top:8px"><button class="chip ${!pf.s ? "on" : ""}" data-s="">Tất cả</button>${Object.keys(SCEN).map(s => `<button class="chip ${pf.s === s ? "on" : ""}" data-s="${s}">${esc(SCEN[s].n)}</button>`).join("")}</div></details>
+   <button class="btn block" id="pGo" ${pool.length ? "" : "disabled"}>Bắt đầu ${Math.min(pf.size, pool.length)} câu</button>
+   <p class="muted small center">Câu chưa làm và câu hay sai được ưu tiên.</p>`;
   document.querySelectorAll("[data-d]").forEach(b => b.onclick = () => { pf.d = +b.dataset.d; Practice(); });
   document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { pf.s = b.dataset.s; Practice(); });
   document.querySelectorAll("[data-n]").forEach(b => b.onclick = () => { pf.size = +b.dataset.n; Practice(); });
-  $("#pRev").onclick = () => startPractice({review: true});
+  if ($("#pRev")) $("#pRev").onclick = () => startPractice({review: true});
   $("#pGo").onclick = () => startPractice({});
 }
 function practicePool() { return ALL.filter(q => (!pf.d || q.d === pf.d) && (!pf.s || q.s === pf.s)); }
@@ -367,7 +432,7 @@ function practiceQ() {
      <button class="chip" id="pX">✕ Thoát</button>
      <span class="small"><b>${P.cur + 1}</b>/${P.list.length} ${P.review ? '<span class="tag bad">Ôn câu sai</span>' : ""}</span>${vnBtn()}</div>
    <div class="bar" style="margin:10px 0"><i style="width:${P.cur / P.list.length * 100}%"></i></div>
-   <p><span class="tag">${dname(q.d)}</span> <span class="muted small">Mock ${q.ex} · Q${q.i + 1}</span></p>
+   <details class="small scen"><summary>D${q.d} · ${esc(SCEN[q.s].n)}</summary><p>${fmt(SCEN[q.s].d)}</p>${S.showVN ? `<p class="vn">${fmt(SCEN[q.s].dv)}</p>` : ""}</details>
    ${qHTML(q, P.picked, P.checked)}
    ${P.checked ? explHTML(q, P.picked) : ""}
    ${P.checked ? `<button class="btn block" id="pNext">${P.cur + 1 < P.list.length ? "Câu tiếp (next) →" : "Xem kết quả"}</button>`
@@ -572,7 +637,7 @@ let TR = null, trLoad = null;          // tracks.json
 let lf = {cat: "guide", d: 0, ex: 0, wrongOnly: false};
 let PL = {list: [], idx: -1};          // current playlist
 const au = $("#au");
-const CATS = [["guide", "Exam guide"], ["lesson", "Bài học"], ["cards", "Flashcards"], ["quiz", "Câu hỏi"]];
+const CATS = [["guide", "Guide"], ["lesson", "Bài học"], ["cards", "Thẻ"], ["quiz", "Câu hỏi"]];
 function loadTracks() {
   if (!trLoad) trLoad = Promise.all([fetch("audio/tracks.json").then(r => r.json()), fetch("audio/durations.json").then(r => r.ok ? r.json() : {}).catch(() => ({}))])
     .then(([j, dur]) => { TR = j.tracks; TR.forEach(t => t.sec = dur[t.id] || 0); return TR; }).catch(() => { trLoad = null; return null; });
@@ -587,14 +652,13 @@ function Listen() {
     loadTracks().then(t => { if (view.tab !== "listen") return; if (t) Listen(); else $("#app").innerHTML = `<h1>Nghe (listen)</h1><p class="muted">Chưa tải được danh sách audio. Kiểm tra mạng rồi thử lại.</p>`; }); return; }
   const list = filtered(), cur = PL.list[PL.idx];
   const mins = Math.round(list.reduce((s, t) => s + (t.sec || 0), 0) / 60);
-  $("#app").innerHTML = `<h1>Nghe (listen)</h1>
-   <p class="muted small">Audio tiếng Việt (giọng HoaiMy). Vẫn nghe được khi khoá màn hình. Bấm “Tải về” để nghe offline trên đường đi.</p>
-   <div class="chips">${CATS.map(([k, n]) => `<button class="chip ${lf.cat === k ? "on" : ""}" data-cat="${k}">${n}</button>`).join("")}</div>
-   <div class="chips">${[0, 1, 2, 3, 4, 5].map(d => `<button class="chip ${lf.d === d ? "on" : ""}" data-ld="${d}">${d ? "D" + d : "Mọi domain"}</button>`).join("")}</div>
-   ${lf.cat === "quiz" ? `<div class="chips">${[0, 1, 2, 3, 4].map(e => `<button class="chip ${lf.ex === e ? "on" : ""}" data-le="${e}">${e ? "Mock " + e : "Mọi mock"}</button>`).join("")}
-     <button class="chip ${lf.wrongOnly ? "on" : ""}" id="lW">Chỉ câu tôi sai</button></div>` : ""}
+  $("#app").innerHTML = `<h1>Nghe</h1>
+   <div class="seg" style="grid-template-columns:repeat(4,1fr);margin:6px 0 10px">${CATS.map(([k, n]) => `<button class="${lf.cat === k ? "on" : ""}" data-cat="${k}">${n}</button>`).join("")}</div>
+   <div class="chips">${[0, 1, 2, 3, 4, 5].map(d => `<button class="chip ${lf.d === d ? "on" : ""}" data-ld="${d}">${d ? "D" + d : "Tất cả"}</button>`).join("")}
+   ${lf.cat === "quiz" ? `<button class="chip ${lf.wrongOnly ? "on" : ""}" id="lW">Câu tôi sai</button>` : ""}</div>
+   ${lf.cat === "quiz" ? `<div class="chips">${[0, 1, 2, 3, 4].map(e => `<button class="chip ${lf.ex === e ? "on" : ""}" data-le="${e}">${e ? "Mock " + e : "Mọi mock"}</button>`).join("")}</div>` : ""}
    <div class="grid2" style="margin:8px 0"><button class="btn" id="lPlay" ${list.length ? "" : "disabled"}>▶ Phát ${list.length} bài${mins ? ` (~${mins} phút)` : ""}</button>
-     <button class="btn sec" id="lDl" ${list.length ? "" : "disabled"}>⬇︎ Tải về (offline)</button></div>
+     <button class="btn sec" id="lDl" ${list.length ? "" : "disabled"}>⬇︎ Tải offline</button></div>
    <p class="muted small" id="lDlS"></p>
    <div class="card">${list.length ? list.map((t, k) => `<div class="trk ${cur && cur.id === t.id ? "now" : ""}" data-k="${k}">
       <button class="pbtn" data-play="${k}" aria-label="play">${cur && cur.id === t.id && !au.paused ? "❚❚" : "▶"}</button>
