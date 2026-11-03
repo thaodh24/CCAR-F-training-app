@@ -23,7 +23,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Restore MP3 cache
-        uses: actions/cache@v4
+        id: mp3cache
+        uses: actions/cache/restore@v4
         with:
           path: audio/mp3
           key: mp3-${{ hashFiles('audio/tracks.json', 'tools/build_audio.py') }}
@@ -40,6 +41,14 @@ jobs:
 
       - name: Build MP3s (only new or changed tracks)
         run: python tools/build_audio.py
+
+      # Save right away, so the MP3s are kept even if the Pages deploy below fails.
+      - name: Save MP3 cache
+        if: steps.mp3cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: audio/mp3
+          key: mp3-${{ hashFiles('audio/tracks.json', 'tools/build_audio.py') }}
 
       - name: Collect site files
         run: |
