@@ -138,6 +138,12 @@ button.card{width:100%;text-align:left;font:inherit;color:var(--ink);cursor:poin
 .vnbox summary{color:var(--vn)}
 .vnbox p{margin:6px 0}
 .expl.good{border-left-color:var(--ok);background:var(--ok-soft)}.expl.badx{border-left-color:var(--bad);background:var(--bad-soft)}
+.doc h2{font-size:1.2rem;line-height:1.35}
+.sumbox{background:var(--brand-soft);border-radius:12px;padding:10px 12px;margin:12px 0;font-weight:600;font-size:.95rem}
+.sect{margin:20px 0 6px}
+.gi{border-left:3px solid var(--line);padding:2px 0 2px 12px;margin:10px 0}
+.gi p{margin:2px 0}.gi .en{font-size:.95rem}
+.notes{padding-left:20px}.notes li{margin:8px 0}.notes .vn{display:inline;font-size:.9rem}
 .scen{margin:2px 0 8px}.scen summary{color:var(--muted)}
 select{font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
 </style>
@@ -151,7 +157,7 @@ select{font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);
 <script>
 "use strict";
 /* ========== Data ========== */
-const {SCEN, EXAMS, Q, DOMAINS, GLOSS, LESSONS} = window.CCARF;
+const {SCEN, EXAMS, Q, DOMAINS, GLOSS, LESSONS, GUIDE} = window.CCARF;
 const PLAN_URL = "https://claude.ai/artifact/5smrFLP66m1zuGhDWwfiba";
 const ALL = [];
 Object.keys(Q).forEach(e => Q[e].forEach((q, i) => { q.id = e + "-" + i; q.ex = +e; q.i = i; ALL.push(q); }));
@@ -216,7 +222,7 @@ const TABS = [
   ["home", "Home", '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],
   ["practice", "Luyện", '<path d="M4 5h16M4 12h16M4 19h10"/><circle cx="19" cy="19" r="2"/>'],
   ["mock", "Thi thử", '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/>'],
-  ["listen", "Nghe", '<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="7" rx="1.5"/><rect x="17" y="14" width="4" height="7" rx="1.5"/>'],
+  ["listen", "Học", '<path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2z"/><path d="M22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"/>'],
   ["cards", "Thẻ", '<rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/>'],
 ];
 let view = {tab: "home"};
@@ -632,6 +638,62 @@ function cardQ() {
     if (!C.flip) return; if (dx > 80) answer(true); else if (dx < -80) answer(false); });
 }
 
+/* ========== Read (study text) ========== */
+let rf = {cat: "guide", d: 0};
+function readDocs() {
+  const g = GUIDE.map(x => ({id: "guide-" + x.id, cat: "guide", d: x.d, title: x.id + " · " + x.vt, en: x.title, g: x}));
+  const l = []; LESSONS.forEach(x => x.secs.forEach((sec, i) => l.push({id: `les-${x.day}-${i + 1}`, cat: "lesson", d: x.d, day: x.day,
+    title: `Day ${x.day} · ${sec.h.replace(/\[\[[^\]]+\]\]/g, "").replace(/\s+/g, " ").trim()}`, sec})));
+  return [...g, ...l];
+}
+let DOCS = null;
+function Read() {
+  DOCS = DOCS || readDocs();
+  if (view.doc) return readDoc();
+  const list = DOCS.filter(x => x.cat === rf.cat && (!rf.d || x.d === rf.d));
+  const read = list.filter(x => (S.read || {})[x.id]).length;
+  $("#app").innerHTML = `${LH("read")}
+   <div class="seg" style="grid-template-columns:1fr 1fr;margin:0 0 10px"><button class="${rf.cat === "guide" ? "on" : ""}" data-rc="guide">Exam guide</button><button class="${rf.cat === "lesson" ? "on" : ""}" data-rc="lesson">Bài học</button></div>
+   <div class="chips">${[0, 1, 2, 3, 4, 5].map(d => `<button class="chip ${rf.d === d ? "on" : ""}" data-rd="${d}">${d ? "D" + d : "Tất cả"}</button>`).join("")}</div>
+   <p class="muted small">Đã đọc ${read}/${list.length}${rf.cat === "guide" ? " · nội dung gốc của exam guide, kèm giải thích tiếng Việt" : " · notes của 9-day plan"}</p>
+   <div class="card">${list.map(x => `<button class="drow" data-doc="${x.id}"><span class="dl">${esc(x.title)}${x.en ? `<span class="muted small" style="display:block">${esc(x.en)}</span>` : ""}</span>
+     <span class="dv">${(S.read || {})[x.id] ? '<span class="okc">✓</span>' : "›"}</span></button>`).join("")}</div>`;
+  bindLH();
+  document.querySelectorAll("[data-rc]").forEach(b => b.onclick = () => { rf.cat = b.dataset.rc; Read(); });
+  document.querySelectorAll("[data-rd]").forEach(b => b.onclick = () => { rf.d = +b.dataset.rd; Read(); });
+  document.querySelectorAll("[data-doc]").forEach(b => b.onclick = () => { view.doc = b.dataset.doc; readDoc(); window.scrollTo(0, 0); });
+}
+function readDoc() {
+  const list = DOCS.filter(x => x.cat === rf.cat && (!rf.d || x.d === rf.d));
+  let i = list.findIndex(x => x.id === view.doc); if (i < 0) { i = 0; }
+  const x = list[i] || DOCS.find(y => y.id === view.doc), done = (S.read || {})[x.id];
+  const item = ([e, v], n, label) => `<div class="gi"><p class="muted small">${label} ${n + 1}</p><p class="en">${fmt(e)}</p>${S.showVN ? `<p class="vn">${esc(v)}</p>` : ""}</div>`;
+  let body;
+  if (x.g) { const g = x.g;
+    body = `<p class="muted small">Task statement ${g.id} · ${dname(g.d)}</p><h2 style="margin-top:4px">${esc(g.title)}</h2>${S.showVN ? `<p class="vn">${esc(g.vt)}</p>` : ""}
+      <div class="sumbox">${esc(g.sum)}</div>
+      <h3 class="sect">Knowledge of <span class="muted small">· kiến thức cần biết</span></h3>${g.k.map((b, n) => item(b, n, "Ý")).join("")}
+      <h3 class="sect">Skills in <span class="muted small">· kỹ năng cần làm được</span></h3>${g.s.map((b, n) => item(b, n, "Kỹ năng")).join("")}`;
+  } else {
+    body = `<p class="muted small">Day ${x.day} · ${dname(x.d)}</p><h2 style="margin-top:4px">${gloss(x.sec.h)}</h2>
+      <ul class="notes">${x.sec.items.map(t => `<li>${gloss(t)}</li>`).join("")}</ul>`;
+  }
+  $("#app").innerHTML = `<div class="top row" style="justify-content:space-between"><button class="chip" id="dB">← Danh sách</button><span class="small muted">${i + 1}/${list.length}</span>${vnBtn()}</div>
+    <article class="doc">${body}</article>
+    <div class="grid2" style="margin-top:14px"><button class="btn sec" id="dPlay">🎧 Nghe bài này</button><button class="btn sec" id="dPr">Luyện 10 câu D${x.d}</button></div>
+    <button class="btn block ${done ? "ok" : ""}" id="dDone" style="margin-top:10px">${done ? "✓ Đã đọc" : "Đánh dấu đã đọc"}</button>
+    <div class="grid2" style="margin-top:10px"><button class="btn ghost" id="dPrev" ${i > 0 ? "" : "disabled"}>← Bài trước</button><button class="btn ghost" id="dNext" ${i + 1 < list.length ? "" : "disabled"}>Bài sau →</button></div>`;
+  $("#dB").onclick = () => { view.doc = null; Read(); };
+  bindVN(readDoc);
+  $("#dDone").onclick = () => { S.read = S.read || {}; if (S.read[x.id]) delete S.read[x.id]; else { S.read[x.id] = today(); markActive(); } save();
+    if (S.read[x.id] && i + 1 < list.length) { view.doc = list[i + 1].id; toast("✓ Đã đọc, sang bài tiếp"); window.scrollTo(0, 0); } readDoc(); };
+  $("#dPrev").onclick = () => { view.doc = list[i - 1].id; readDoc(); window.scrollTo(0, 0); };
+  $("#dNext").onclick = () => { view.doc = list[i + 1].id; readDoc(); window.scrollTo(0, 0); };
+  $("#dPr").onclick = () => { pf = {d: x.d, s: "", size: 10}; startPractice({}); };
+  $("#dPlay").onclick = () => loadTracks().then(t => { const tr = t && t.find(y => y.id === x.id); if (!tr) return toast("Chưa có audio cho bài này");
+    playList(t.filter(y => y.cat === tr.cat && (!rf.d || y.d === rf.d)), t.filter(y => y.cat === tr.cat && (!rf.d || y.d === rf.d)).indexOf(tr)); });
+}
+
 /* ========== Listen (audio) ========== */
 let TR = null, trLoad = null;          // tracks.json
 let lf = {cat: "guide", d: 0, ex: 0, wrongOnly: false};
@@ -647,12 +709,16 @@ function filtered() {
   return (TR || []).filter(t => t.cat === lf.cat && (!lf.d || t.d === lf.d) && (lf.cat !== "quiz" || ((!lf.ex || t.exam === lf.ex) &&
     (!lf.wrongOnly || (S.qs[t.id.slice(2)] || {}).box))));
 }
+const LH = sub => `<h1>Học</h1><div class="seg" style="grid-template-columns:1fr 1fr;margin:6px 0 12px">
+  <button class="${sub === "read" ? "on" : ""}" data-sub="read">📖 Đọc</button><button class="${sub === "listen" ? "on" : ""}" data-sub="listen">🎧 Nghe</button></div>`;
+function bindLH() { document.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => { S.learnSub = b.dataset.sub; save(); view.doc = null; Listen(); window.scrollTo(0, 0); }); }
 function Listen() {
+  if ((S.learnSub || "read") === "read") return Read();
   if (!TR) { $("#app").innerHTML = `<h1>Nghe (listen)</h1><p class="muted">Đang tải danh sách audio…</p>`;
     loadTracks().then(t => { if (view.tab !== "listen") return; if (t) Listen(); else $("#app").innerHTML = `<h1>Nghe (listen)</h1><p class="muted">Chưa tải được danh sách audio. Kiểm tra mạng rồi thử lại.</p>`; }); return; }
   const list = filtered(), cur = PL.list[PL.idx];
   const mins = Math.round(list.reduce((s, t) => s + (t.sec || 0), 0) / 60);
-  $("#app").innerHTML = `<h1>Nghe</h1>
+  $("#app").innerHTML = `${LH("listen")}
    <div class="seg" style="grid-template-columns:repeat(4,1fr);margin:6px 0 10px">${CATS.map(([k, n]) => `<button class="${lf.cat === k ? "on" : ""}" data-cat="${k}">${n}</button>`).join("")}</div>
    <div class="chips">${[0, 1, 2, 3, 4, 5].map(d => `<button class="chip ${lf.d === d ? "on" : ""}" data-ld="${d}">${d ? "D" + d : "Tất cả"}</button>`).join("")}
    ${lf.cat === "quiz" ? `<button class="chip ${lf.wrongOnly ? "on" : ""}" id="lW">Câu tôi sai</button>` : ""}</div>
@@ -665,6 +731,7 @@ function Listen() {
       <div class="tt">${esc(t.title)}<div class="muted small">D${t.d}${t.sec ? " · " + Math.round(t.sec / 60) + " phút" : ""}${(S.listen[t.id] || {}).done ? " · ✓ đã nghe" : ""}</div></div></div>`).join("")
      : `<p class="muted">${lf.cat === "quiz" && lf.wrongOnly ? "Bạn chưa có câu sai nào trong danh sách ôn." : "Không có bài nào."}</p>`}</div>
    ${cur ? `<details class="card"><summary>Lời đọc bài đang phát (transcript)</summary>${cur.segs.filter(s => s[0] !== "pause").map(s => `<p class="${s[0] === "en" ? "" : "small"}">${s[0] === "en" ? "<b>" + esc(s[1]) + "</b>" : esc(s[1])}</p>`).join("")}</details>` : ""}`;
+  bindLH();
   document.querySelectorAll("[data-cat]").forEach(b => b.onclick = () => { lf.cat = b.dataset.cat; Listen(); });
   document.querySelectorAll("[data-ld]").forEach(b => b.onclick = () => { lf.d = +b.dataset.ld; Listen(); });
   document.querySelectorAll("[data-le]").forEach(b => b.onclick = () => { lf.ex = +b.dataset.le; Listen(); });
