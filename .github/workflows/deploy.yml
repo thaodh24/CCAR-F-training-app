@@ -1,0 +1,64 @@
+# Builds the Vietnamese MP3s and publishes the app to GitHub Pages on every push to main.
+name: Build audio and deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore MP3 cache
+        uses: actions/cache@v4
+        with:
+          path: audio/mp3
+          key: mp3-${{ hashFiles('audio/tracks.json', 'tools/build_audio.py') }}
+          restore-keys: mp3-
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install tools
+        run: |
+          pip install edge-tts==7.3.1
+          which ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
+
+      - name: Build MP3s (only new or changed tracks)
+        run: python tools/build_audio.py
+
+      - name: Collect site files
+        run: |
+          mkdir -p _site
+          cp -r index.html sw.js manifest.webmanifest qbank.js icons audio _site/
+          rm -f _site/audio/.gitkeep
+          du -sh _site _site/audio/mp3
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
