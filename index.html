@@ -126,6 +126,8 @@ button.card{width:100%;text-align:left;font:inherit;color:var(--ink);cursor:poin
 .drow:last-of-type{border-bottom:0}
 .drow .dl{font-size:.92rem}.drow .dv{font-weight:700;font-size:.92rem}
 .drow .bar{grid-column:1 / -1;height:6px}
+.ck{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;border:2px solid var(--line);margin-right:8px;vertical-align:-5px;font-size:.8rem;font-weight:900;color:#fff}
+.ck.on{background:var(--brand);border-color:var(--brand)}
 .drow.pick1.sel .dl b,.drow.pick1.sel .dl{color:var(--brand);font-weight:700}
 .drow.pick1.sel{background:var(--brand-soft);border-radius:10px;padding-left:8px;padding-right:8px}
 .mocks4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
@@ -766,37 +768,47 @@ function importData(e) {
 
 /* ========== Practice ========== */
 let P = null;   // current practice session
-let pf = {d: 0, s: "", size: 10};
+let pf = {d: 0, s: "", size: 10};      // quick start (map zone, next step, lesson): one domain, total size
+// Practice picker: several domains mixed, N questions per domain. Empty list = all 5 domains. Saved between visits.
+function pk() { const k = S.pk || (S.pk = {ds: [], per: 5, s: ""}); if (!Array.isArray(k.ds)) k.ds = []; return k; }
+const pkDomains = () => pk().ds.length ? pk().ds.slice().sort() : [1, 2, 3, 4, 5];
+const pkAvail = d => ALL.filter(q => q.d === d && (!pk().s || q.s === pk().s)).length;
+const pkTotal = () => pkDomains().reduce((t, d) => t + Math.min(pk().per, pkAvail(d)), 0);
 function Practice() {
   if (P) return practiceQ();
-  const due = dueQs().length, pool = practicePool(), ds = domainStats();
+  const due = dueQs().length, ds = domainStats(), k = pk(), sel = k.ds, all = !sel.length, total = pkTotal(), doms = pkDomains();
   $("#app").innerHTML = `${hud()}<h1>⚔️ Luyện tập</h1>
    ${due ? `<button class="card next" id="pRev"><span class="muted small">Đến hạn ôn</span><b>Ôn ${due} câu sai →</b></button>` : ""}
-   <h2>Chọn domain</h2>
-   <div class="card">${[0, 1, 2, 3, 4, 5].map(d => `<button class="drow pick1 ${pf.d === d ? "sel" : ""}" data-d="${d}">
-      <span class="dl">${d ? `${ZONES[d][0]} <b>D${d}</b> ${esc(DOMAINS[d][1])}` : "🌐 <b>Tất cả domain</b>"}</span>
-      <span class="dv">${d ? starsHTML(zoneStars(ds[d])) + " " + (ds[d].n ? pct(ds[d].c, ds[d].n) + "%" : "–") : ""}</span></button>`).join("")}</div>
-   <div class="seg">${[10, 20, 30].map(n => `<button class="${pf.size === n ? "on" : ""}" data-n="${n}">${n} câu</button>`).join("")}</div>
-   <details class="small" style="margin:10px 2px"><summary>Lọc theo scenario${pf.s ? ": " + esc(SCEN[pf.s].n) : ""}</summary>
-     <div class="chips" style="flex-wrap:wrap;margin-top:8px"><button class="chip ${!pf.s ? "on" : ""}" data-s="">Tất cả</button>${Object.keys(SCEN).map(s => `<button class="chip ${pf.s === s ? "on" : ""}" data-s="${s}">${esc(SCEN[s].n)}</button>`).join("")}</div></details>
-   <button class="btn block" id="pGo" ${pool.length ? "" : "disabled"}>Bắt đầu ${Math.min(pf.size, pool.length)} câu</button>
+   <h2>Chọn domain <span class="muted small" style="font-weight:500">· chọn nhiều để trộn (mix)</span></h2>
+   <div class="card">${[0, 1, 2, 3, 4, 5].map(d => { const on = d ? sel.includes(d) : all;
+     return `<button class="drow pick1 ${on ? "sel" : ""}" data-d="${d}" aria-pressed="${on}">
+      <span class="dl"><span class="ck ${on ? "on" : ""}">${on ? "✓" : ""}</span>${d ? `${ZONES[d][0]} <b>D${d}</b> ${esc(DOMAINS[d][1])}` : "🌐 <b>Tất cả domain</b>"}</span>
+      <span class="dv">${d ? starsHTML(zoneStars(ds[d])) + " " + (ds[d].n ? pct(ds[d].c, ds[d].n) + "%" : "–") : ""}</span></button>`; }).join("")}</div>
+   <p class="small" style="margin:12px 2px 0"><b>Số câu mỗi domain</b> <span class="muted">(questions per domain)</span></p>
+   <div class="seg" style="grid-template-columns:repeat(4,1fr);margin-top:6px">${[5, 10, 15, 20].map(n => `<button class="${k.per === n ? "on" : ""}" data-n="${n}">${n}</button>`).join("")}</div>
+   <details class="small" style="margin:10px 2px"><summary>Lọc theo scenario${k.s ? ": " + esc(SCEN[k.s].n) : ""}</summary>
+     <div class="chips" style="flex-wrap:wrap;margin-top:8px"><button class="chip ${!k.s ? "on" : ""}" data-s="">Tất cả</button>${Object.keys(SCEN).map(x => `<button class="chip ${k.s === x ? "on" : ""}" data-s="${x}">${esc(SCEN[x].n)}</button>`).join("")}</div></details>
+   <div class="sumbox center">${all ? "Tất cả 5 domain" : doms.map(d => "D" + d).join(" + ")} · ${doms.length} × ${k.per} câu = <b>${total} câu</b>
+     ${doms.some(d => pkAvail(d) < k.per) ? `<div class="muted small" style="font-weight:500">Domain có ít câu hơn thì lấy hết câu đang có.</div>` : ""}</div>
+   <button class="btn block" id="pGo" ${total ? "" : "disabled"}>⚔️ Bắt đầu ${total} câu</button>
    <p class="muted small center">Đúng +10 XP · combo 🔥 thêm bonus · ôn câu sai +15 XP · xong lượt +20 XP.</p>`;
-  document.querySelectorAll("[data-d]").forEach(b => b.onclick = () => { pf.d = +b.dataset.d; Practice(); });
-  document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { pf.s = b.dataset.s; Practice(); });
-  document.querySelectorAll("[data-n]").forEach(b => b.onclick = () => { pf.size = +b.dataset.n; Practice(); });
+  document.querySelectorAll("[data-d]").forEach(b => b.onclick = () => { const d = +b.dataset.d;
+    if (!d) k.ds = []; else { k.ds = k.ds.includes(d) ? k.ds.filter(x => x !== d) : [...k.ds, d]; if (k.ds.length === 5) k.ds = []; }
+    save(); const y = window.scrollY; Practice(); window.scrollTo(0, y); });
+  document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { k.s = b.dataset.s; save(); Practice(); });
+  document.querySelectorAll("[data-n]").forEach(b => b.onclick = () => { k.per = +b.dataset.n; save(); const y = window.scrollY; Practice(); window.scrollTo(0, y); });
   if ($("#pRev")) $("#pRev").onclick = () => startPractice({review: true});
-  $("#pGo").onclick = () => startPractice({});
+  $("#pGo").onclick = () => { pf = {ds: pkDomains(), per: k.per, s: k.s}; startPractice({}); };
 }
 function practicePool() { return ALL.filter(q => (!pf.d || q.d === pf.d) && (!pf.s || q.s === pf.s)); }
+// Unseen and often-wrong questions first, then shuffled.
+function pickWeak(pool, n) { const score = q => { const r = S.qs[q.id]; return !r ? -1 : r.c / r.n; };
+  return shuffle(pool).sort((a, b) => score(a) - score(b)).slice(0, n); }
 function startPractice(o) {
   let list;
   if (o.review) list = shuffle(dueQs()).slice(0, 20);
-  else {
-    const pool = shuffle(practicePool());
-    const score = q => { const r = S.qs[q.id]; return !r ? -1 : r.c / r.n; };
-    list = pool.sort((a, b) => score(a) - score(b)).slice(0, pf.size);
-    list = shuffle(list);
-  }
+  else if (pf.ds) list = shuffle(pf.ds.flatMap(d => pickWeak(ALL.filter(q => q.d === d && (!pf.s || q.s === pf.s)), pf.per)));
+  else list = shuffle(pickWeak(practicePool(), pf.size));
   if (!list.length) return toast("Không có câu nào");
   P = {list, cur: 0, picked: [], checked: false, right: 0, review: !!o.review, combo: 0, best: 0, xp: 0, last: 0};
   view = {tab: "practice"}; render(); window.scrollTo(0, 0);
