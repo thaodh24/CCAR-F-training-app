@@ -9,7 +9,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CCAR-F">
-<meta name="theme-color" content="#1e296e">
+<meta name="theme-color" content="#3b1fa0">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png">
 <link rel="manifest" href="manifest.webmanifest">
@@ -146,11 +146,108 @@ button.card{width:100%;text-align:left;font:inherit;color:var(--ink);cursor:poin
 .notes{padding-left:20px}.notes li{margin:8px 0}.notes .vn{display:inline;font-size:.9rem}
 .scen{margin:2px 0 8px}.scen summary{color:var(--muted)}
 select{font:inherit;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+
+/* ========== Game skin ========== */
+:root{--brand:#6a3df0;--brand-soft:#ece6ff;--bg:#f3f0ff;--gold:#f5a400;--gold-soft:#fff3d1;--xp1:#7c4dff;--xp2:#00c2ff;--fire:#ff6a2b}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e0a22;--card:#1a1438;--line:#2d2557;--brand:#a993ff;--brand-soft:#2a2160;--gold:#ffc83d;--gold-soft:#3a2e0e;--bar:#1a1438ee}}
+:root[data-theme="dark"]{--bg:#0e0a22;--card:#1a1438;--line:#2d2557;--brand:#a993ff;--brand-soft:#2a2160;--gold:#ffc83d;--gold-soft:#3a2e0e;--bar:#1a1438ee}
+body{background:radial-gradient(900px 500px at 100% -10%,rgba(124,77,255,.18),transparent 60%),radial-gradient(700px 400px at -10% 30%,rgba(0,194,255,.10),transparent 60%),var(--bg);background-attachment:fixed}
+h1{font-weight:800}
+.card{border-radius:20px}
+.btn{border-radius:14px;font-weight:800;box-shadow:0 4px 0 rgba(30,10,90,.35);transition:transform .06s,box-shadow .06s;letter-spacing:.01em}
+.btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 rgba(30,10,90,.35)}
+.btn.sec,.btn.ok,.btn.bad{box-shadow:0 3px 0 rgba(30,10,90,.15)}
+.btn.ghost{box-shadow:none}
+.btn.gold{background:linear-gradient(180deg,#ffd34d,#f5a400);color:#3a2300;box-shadow:0 4px 0 #b87400}
+.opt{border-width:2px;border-bottom-width:4px;transition:transform .08s}
+.opt:active:not(:disabled){transform:translateY(2px)}
+.opt.right{animation:pop .35s}
+.opt.wrong{animation:shake .35s}
+@keyframes pop{50%{transform:scale(1.04)}}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.xpbar{height:12px;background:var(--line);border-radius:99px;overflow:hidden;position:relative}
+.xpbar>i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--xp1),var(--xp2));box-shadow:inset 0 -3px 0 rgba(0,0,0,.15);transition:width .6s cubic-bezier(.2,.9,.3,1.2)}
+.player-card{background:linear-gradient(135deg,#5b2be0,#8b4dff 55%,#00b4e6);color:#fff;border:0;border-radius:24px;padding:16px;box-shadow:0 10px 30px rgba(91,43,224,.35);position:relative;overflow:hidden}
+.player-card::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.10)}
+.player-card .xpbar{background:rgba(255,255,255,.25)}
+.player-card .xpbar>i{background:linear-gradient(90deg,#ffe066,#ffb800)}
+.avatar{width:64px;height:64px;border-radius:20px;background:rgba(255,255,255,.18);display:grid;place-items:center;font-size:2.2rem;flex:none;position:relative}
+.avatar .lv{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);background:#ffb800;color:#3a2300;font-weight:900;font-size:.72rem;border-radius:99px;padding:1px 8px;white-space:nowrap;border:2px solid #fff}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.pill{background:rgba(255,255,255,.18);border-radius:99px;padding:4px 10px;font-size:.82rem;font-weight:700}
+.hud{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 12px;margin:6px 0 4px;width:100%;font:inherit;color:var(--ink);text-align:left}
+.hud .lvb{background:linear-gradient(135deg,var(--xp1),var(--xp2));color:#fff;font-weight:900;border-radius:10px;padding:3px 8px;font-size:.8rem;flex:none}
+.hud .xpbar{flex:1;height:10px}
+.cta{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:20px;padding:14px 16px;margin:12px 0;font:inherit;text-align:left;color:#3a2300;
+  background:linear-gradient(180deg,#ffd84d,#ffb300);box-shadow:0 5px 0 #c98500,0 10px 24px rgba(255,170,0,.25)}
+.cta:active{transform:translateY(4px);box-shadow:0 1px 0 #c98500}
+.cta .ic{font-size:2rem}.cta b{font-size:1.08rem;display:block}.cta span{font-size:.85rem;opacity:.85}
+.quest{display:grid;grid-template-columns:34px 1fr auto;gap:4px 10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.quest:last-child{border-bottom:0}
+.quest .qi{font-size:1.5rem;grid-row:span 2;text-align:center}
+.quest .qt{font-size:.92rem;font-weight:600}
+.quest .qr{font-size:.78rem;font-weight:800;color:var(--gold);background:var(--gold-soft);border-radius:99px;padding:2px 8px;grid-row:span 2}
+.quest.done .qt{text-decoration:line-through;color:var(--muted)}
+.quest.done .qr{color:var(--ok);background:var(--ok-soft)}
+.quest .bar{height:7px}.quest .bar>i{background:linear-gradient(90deg,var(--xp1),var(--xp2))}
+.chest{display:flex;align-items:center;gap:10px;margin-top:8px;padding:10px 12px;border-radius:14px;background:var(--gold-soft);color:var(--ink);font-size:.9rem}
+.chest .ci{font-size:1.7rem}
+.chest.open .ci{animation:pop .6s 2}
+.map{position:relative;padding:6px 0}
+.map::before{content:"";position:absolute;left:50%;top:30px;bottom:30px;border-left:4px dashed var(--line);transform:translateX(-2px)}
+.mnode{position:relative;display:flex;margin:6px 0}
+.mnode.l{justify-content:flex-start;padding-left:6%}.mnode.c{justify-content:center}.mnode.r{justify-content:flex-end;padding-right:6%}
+.mnode button{border:0;background:none;font:inherit;color:var(--ink);display:flex;flex-direction:column;align-items:center;width:132px;padding:0}
+.orb{width:78px;height:78px;border-radius:50%;display:grid;place-items:center;font-size:2.2rem;position:relative;
+  background:radial-gradient(circle at 35% 30%,#fff8,transparent 45%),var(--zc,#7c4dff);box-shadow:0 6px 0 rgba(0,0,0,.25),0 0 0 5px var(--card)}
+.orb.boss{width:90px;height:90px;font-size:2.6rem;background:radial-gradient(circle at 35% 30%,#fff6,transparent 45%),linear-gradient(135deg,#ff4d6d,#8a1fff)}
+.orb.dead{filter:grayscale(.2)}
+.orb.dead::after{content:"✓";position:absolute;right:-4px;bottom:-4px;background:var(--ok);color:#fff;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:1rem;font-weight:900;border:3px solid var(--card)}
+.orb.rec{animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 6px 0 rgba(0,0,0,.25),0 0 0 5px var(--card),0 0 0 8px rgba(255,184,0,.0)}50%{box-shadow:0 6px 0 rgba(0,0,0,.25),0 0 0 5px var(--card),0 0 0 12px rgba(255,184,0,.55)}}
+.mname{font-weight:800;font-size:.86rem;margin-top:8px;text-align:center;line-height:1.2;background:var(--bg);padding:0 4px;border-radius:6px}
+.msub{font-size:.74rem;color:var(--muted);text-align:center;background:var(--bg);padding:0 4px;border-radius:6px}
+.stars{color:var(--gold);letter-spacing:1px;font-size:.95rem;background:var(--bg);padding:0 4px;border-radius:6px}
+.stars .off{color:var(--line)}
+.badges{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.bdg{border:1px solid var(--line);background:var(--card);border-radius:16px;aspect-ratio:1;display:grid;place-items:center;font-size:1.7rem;padding:0;position:relative}
+.bdg.off{filter:grayscale(1);opacity:.32}
+.bdg.new::after{content:"";position:absolute;top:5px;right:5px;width:9px;height:9px;border-radius:50%;background:var(--bad)}
+.combo{font-weight:900;color:var(--fire);font-size:.9rem;white-space:nowrap}
+.combo.hot{animation:pop .4s}
+.xpgain{display:inline-block;font-weight:900;color:var(--gold);background:var(--gold-soft);border-radius:99px;padding:1px 9px;font-size:.85rem;margin-left:6px}
+.float{position:fixed;left:50%;top:38%;transform:translateX(-50%);z-index:70;font-weight:900;font-size:1.6rem;color:#ffb800;text-shadow:0 2px 0 #7a4b00,0 0 18px rgba(255,184,0,.6);pointer-events:none;animation:floatUp 1.1s ease-out forwards}
+@keyframes floatUp{0%{opacity:0;transform:translate(-50%,20px) scale(.6)}20%{opacity:1;transform:translate(-50%,0) scale(1.15)}100%{opacity:0;transform:translate(-50%,-70px) scale(1)}}
+.banner{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);z-index:65;display:flex;gap:10px;align-items:center;
+  background:linear-gradient(135deg,#2b1a6e,#5b2be0);color:#fff;border-radius:18px;padding:10px 16px;box-shadow:0 10px 30px rgba(0,0,0,.35);width:max-content;max-width:92vw;animation:drop .35s ease-out;pointer-events:none}
+.banner .bi{font-size:1.8rem}.banner small{display:block;opacity:.8;font-size:.78rem}
+@keyframes drop{from{transform:translate(-50%,-120%)}to{transform:translate(-50%,0)}}
+.lvlup{position:fixed;inset:0;z-index:80;background:rgba(10,5,30,.75);display:grid;place-items:center;padding:24px}
+.lvlup .box{background:linear-gradient(160deg,#2b1a6e,#6a3df0 60%,#00a6d6);color:#fff;border-radius:28px;padding:28px 22px;text-align:center;max-width:340px;width:100%;animation:zoom .45s cubic-bezier(.2,1.4,.4,1)}
+.lvlup .big{font-size:4.2rem;line-height:1}
+.lvlup h2{font-size:1.8rem;margin:10px 0 2px;font-weight:900;letter-spacing:.02em}
+@keyframes zoom{from{transform:scale(.4);opacity:0}}
+.confetti{position:fixed;top:-12px;z-index:90;width:9px;height:14px;border-radius:2px;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg)}}
+.boss-hp{display:flex;align-items:center;gap:8px;margin:10px 0 0;font-size:.8rem;font-weight:800}
+.boss-hp .hpbar{flex:1;height:12px;background:var(--line);border-radius:99px;overflow:hidden}
+.boss-hp .hpbar>i{display:block;height:100%;background:linear-gradient(90deg,#ff4d6d,#ff9f1c);transition:width .4s}
+.bosscard{display:flex;gap:14px;align-items:center}
+.bosscard .orb{flex:none;width:70px;height:70px;font-size:2.1rem}
+.victory{border:0;color:#fff;background:linear-gradient(135deg,#0f9d58,#00c2a8)}
+.defeat{border:0;color:#fff;background:linear-gradient(135deg,#8a1fff,#ff4d6d)}
+.victory .muted,.defeat .muted{color:#ffffffcc}
+nav.tabs button .em{font-size:1.45rem;line-height:1.1;filter:grayscale(.7);opacity:.7;transition:transform .15s}
+nav.tabs button.on .em{filter:none;opacity:1;transform:translateY(-2px) scale(1.12)}
+nav.tabs button.on{font-weight:800}
+.pomopill{position:fixed;right:12px;bottom:calc(74px + env(safe-area-inset-bottom));z-index:21;border:0;border-radius:99px;padding:8px 14px;font:inherit;font-size:.9rem;color:#fff;background:linear-gradient(135deg,#ff4d4d,#ff8a1f);box-shadow:0 6px 18px rgba(255,77,77,.4);font-variant-numeric:tabular-nums}
+.player:not([hidden])~.pomopill{bottom:calc(190px + env(safe-area-inset-bottom))}
 </style>
 </head>
 <body>
 <main id="app"></main>
 <div id="player" class="player" hidden></div>
+<button id="pomoPill" class="pomopill" hidden aria-label="Pomodoro"></button>
 <nav class="tabs" id="tabs"></nav>
 <audio id="au" preload="metadata" playsinline></audio>
 <script src="qbank.js"></script>
@@ -194,6 +291,197 @@ function markActive() { const t = today(); if (S.days[S.days.length - 1] !== t) 
 function streak() { const set = new Set(S.days); let d = today(), n = 0; if (!set.has(d)) d = addDays(d, -1);
   while (set.has(d)) { n++; d = addDays(d, -1); } return n; }
 
+/* ========== Game layer: XP, levels, quests, badges, FX ========== */
+const RANKS = [[1, "🐣", "Prompt Newbie"], [3, "🧪", "Token Apprentice"], [5, "🛠️", "Tool Smith"], [8, "🧠", "Context Keeper"],
+  [11, "🤖", "Agent Builder"], [14, "🎼", "Orchestrator"], [17, "🏛️", "Architect"], [20, "👑", "Claude Architect Legend"]];
+const ZONES = {1: ["🏰", "Agent Citadel", "Thành trì Agent", "#7c4dff"], 2: ["⚒️", "Tool Forge", "Lò rèn Tool", "#ff7a1a"],
+  3: ["💻", "Code Valley", "Thung lũng Code", "#00a884"], 4: ["🗼", "Prompt Tower", "Tháp Prompt", "#e0408a"], 5: ["🔮", "Context Caves", "Hang Context", "#1e88e5"]};
+const BOSSES = {1: ["🐉", "Hallucination Dragon", "Rồng Ảo Giác"], 2: ["🐍", "Context-Rot Hydra", "Mãng xà Context"],
+  3: ["🦾", "Rogue Agent", "Agent nổi loạn"], 4: ["👹", "Final Exam Lord", "Trùm cuối"]};
+const lvlNeed = L => 100 + (L - 1) * 50;            // XP needed to go from level L to L+1
+function lvlInfo(xp) { let L = 1, base = 0; while (xp >= base + lvlNeed(L)) { base += lvlNeed(L); L++; } return {L, cur: xp - base, need: lvlNeed(L)}; }
+const rankOf = L => RANKS.filter(r => r[0] <= L).pop();
+const bossDead = id => ((S.mocks[id] || {}).attempts || []).some(a => a.score >= PASS);
+function zoneStars(x) { const acc = x.n ? x.c / x.n : 0, cov = x.total ? x.seen / x.total : 0;
+  return cov >= 1 && acc >= .85 ? 3 : cov >= .5 && acc >= .7 ? 2 : x.seen >= 10 && acc >= .5 ? 1 : 0; }
+const starsHTML = n => `<span class="stars">${[1, 2, 3].map(i => i <= n ? "★" : '<span class="off">★</span>').join("")}</span>`;
+
+/* Daily quests: "correct" every day + 2 picked from the date (review when there are wrong answers due). */
+const QUESTS = {
+  correct: ["🎯", "Trả lời đúng 10 câu", "correct", 10, 40],
+  combo: ["🔥", "Combo 5 câu đúng liên tiếp", "combo", 5, 40],
+  review: ["♻️", "Ôn 5 câu sai (review)", "review", 5, 40],
+  cards: ["🃏", "Lật 10 flashcards", "cards", 10, 30],
+  read: ["📖", "Đọc xong 1 bài", "read", 1, 30],
+  listen: ["🎧", "Nghe xong 2 bài audio", "listen", 2, 30],
+  sessions: ["⚔️", "Hoàn thành 2 lượt luyện", "sessions", 2, 40],
+  pomo: ["🍅", "Hoàn thành 1 pomodoro", "pomo", 1, 40],
+};
+const CHEST_XP = 80;
+function day() { const g = S.g, t = today();
+  if (!g.day || g.day.d !== t) g.day = {d: t, correct: 0, combo: 0, review: 0, cards: 0, read: 0, listen: 0, sessions: 0, pomo: 0};
+  return g.day; }
+function quests() { const g = S.g, t = today();
+  if (!g.q || g.q.d !== t) {
+    const h = [...t].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+    const pool = ["combo", "cards", "read", "listen", "sessions", "pomo"];
+    const second = dueQs().length >= 5 ? "review" : pool[h % pool.length];
+    const rest = pool.filter(k => k !== second);
+    g.q = {d: t, ids: ["correct", second, rest[(h >>> 4) % rest.length]], done: {}, chest: 0};
+  }
+  return g.q; }
+
+const BADGES = [
+  ["first", "🩸", "First Blood", "Câu đúng đầu tiên", () => Object.values(S.qs).some(r => r.c)],
+  ["combo5", "🔥", "On Fire", "Combo 5 câu đúng liên tiếp", () => S.g.maxCombo >= 5],
+  ["combo10", "☄️", "Unstoppable", "Combo 10 câu đúng liên tiếp", () => S.g.maxCombo >= 10],
+  ["perfect", "💯", "Perfect Run", "Lượt luyện ≥10 câu đúng 100%", () => S.g.perfect >= 1],
+  ["seen50", "🧭", "Explorer", "Làm 50 câu khác nhau", () => Object.keys(S.qs).length >= 50],
+  ["seen120", "🗺️", "Pathfinder", "Làm 120 câu khác nhau", () => Object.keys(S.qs).length >= 120],
+  ["seen240", "🌍", "Completionist", "Làm hết 240 câu", () => Object.keys(S.qs).length >= 240],
+  ["streak3", "📅", "3-Day Streak", "Học 3 ngày liên tục", () => streak() >= 3],
+  ["streak7", "⚡", "Week Warrior", "Học 7 ngày liên tục", () => streak() >= 7],
+  ["cards25", "🃏", "Card Collector", "Thuộc 25 thẻ", () => GLOSS.filter(g => (S.cards[cardKey(g)] || {}).box >= 3).length >= 25],
+  ["cards75", "🎴", "Card Master", "Thuộc cả 75 thẻ", () => GLOSS.filter(g => (S.cards[cardKey(g)] || {}).box >= 3).length >= 75],
+  ["read10", "📚", "Bookworm", "Đọc 10 bài", () => Object.keys(S.read || {}).length >= 10],
+  ["listen10", "🎧", "Podcaster", "Nghe xong 10 bài audio", () => Object.values(S.listen || {}).filter(l => l.done).length >= 10],
+  ["pomo5", "🍅", "Tomato Grinder", "Hoàn thành 5 pomodoro", () => (S.g.pomos || 0) >= 5],
+  ["chest3", "🎁", "Quest Hunter", "Mở 3 rương daily", () => S.g.chests >= 3],
+  ["zone3", "⭐", "Zone Master", "1 vùng đạt 3 sao", () => { const ds = domainStats(); return Object.keys(DOMAINS).some(d => zoneStars(ds[d]) === 3); }],
+  ["boss1", "⚔️", "Boss Slayer", "Hạ 1 boss (mock ≥ 720)", () => EXAMS.some(x => bossDead(x.id))],
+  ["boss800", "🎖️", "Exam Ready", "Mock đạt ≥ 800", () => Object.values(S.mocks).some(m => (m.attempts || []).some(a => a.score >= 800))],
+  ["bossAll", "🏆", "Legend", "Hạ cả 4 boss", () => EXAMS.every(x => bossDead(x.id))],
+  ["lvl10", "👑", "Level 10", "Lên level 10", () => lvlInfo(S.g.xp).L >= 10],
+];
+
+// Old progress (before the game update) is converted into starting XP, so nobody starts at zero.
+function retroXP() { let x = 0;
+  Object.values(S.qs).forEach(r => x += (r.c || 0) * 10 + ((r.n || 0) - (r.c || 0)) * 2);
+  Object.values(S.cards).forEach(c => x += (c.box || 0) * 4);
+  x += Object.keys(S.read || {}).length * 20;
+  x += Object.values(S.listen || {}).filter(l => l.done).length * 8;
+  Object.values(S.mocks).forEach(m => (m.attempts || []).forEach(a => x += 50 + (a.score >= PASS ? 100 : 0)));
+  return Math.round(x); }
+function ensureGame() {
+  if (!S.g || typeof S.g !== "object") S.g = {};
+  const g = S.g;
+  if (typeof g.xp !== "number") { g.xp = retroXP(); g.migrated = g.xp; g.rx = Object.assign({}, S.read || {}); }
+  g.rx = g.rx || {}; g.badges = g.badges || {}; g.boss = g.boss || {};
+  ["maxCombo", "chests", "perfect", "pomos"].forEach(k => g[k] = g[k] || 0);
+  checkBadges(true); save();
+}
+
+/* XP + effects */
+let FXQ = [], fxBusy = false;
+function award(xp, ev) {
+  const d = day();
+  if (ev) Object.entries(ev).forEach(([k, v]) => d[k] = k === "combo" ? Math.max(d[k] || 0, v) : (d[k] || 0) + v);
+  addXP(xp);
+  const q = quests();
+  q.ids.forEach(id => { const [ic, label, key, target, rew] = QUESTS[id];
+    if (!q.done[id] && (d[key] || 0) >= target) { q.done[id] = 1; addXP(rew, true); FXQ.push({t: "banner", i: ic, h: "Quest xong! +" + rew + " XP", s: label}); } });
+  if (!q.chest && q.ids.every(id => q.done[id])) { q.chest = 1; S.g.chests++; addXP(CHEST_XP, true); FXQ.push({t: "banner", i: "🎁", h: "Mở rương daily! +" + CHEST_XP + " XP", s: "Hoàn thành cả 3 quest hôm nay"}); }
+  checkBadges(false); save(); runFX();
+}
+function addXP(x, quiet) {
+  if (!x) return; const before = lvlInfo(S.g.xp).L; S.g.xp += x;
+  if (!quiet) floatXP("+" + x + " XP");
+  const after = lvlInfo(S.g.xp).L;
+  if (after > before) FXQ.push({t: "level", L: after, rankUp: rankOf(after) !== rankOf(before)});
+}
+function checkBadges(silent) {
+  BADGES.forEach(([id, ic, name, desc, ok]) => { if (S.g.badges[id]) return; let y = false; try { y = ok(); } catch (e) {}
+    if (y) { S.g.badges[id] = today(); if (!silent) { S.g.newB = 1; FXQ.push({t: "banner", i: ic, h: "Huy hiệu mới: " + name, s: desc}); } } });
+}
+function floatXP(txt) { const f = document.createElement("div"); f.className = "float"; f.textContent = txt; document.body.appendChild(f); setTimeout(() => f.remove(), 1150); }
+function runFX() {
+  if (fxBusy || !FXQ.length) return;
+  if (view.tab === "mock" && view.mode === "exam") return;          // never interrupt a mock exam
+  fxBusy = true; const fx = FXQ.shift(), next = () => { fxBusy = false; runFX(); };
+  if (fx.t === "banner") {
+    sfx("coin");
+    const b = document.createElement("div"); b.className = "banner"; b.innerHTML = `<span class="bi">${fx.i}</span><div><b>${esc(fx.h)}</b><small>${esc(fx.s)}</small></div>`;
+    document.body.appendChild(b); setTimeout(() => { b.remove(); next(); }, 2300);
+  } else {
+    sfx("lvl"); confetti();
+    const r = rankOf(fx.L), o = document.createElement("div"); o.className = "lvlup";
+    o.innerHTML = `<div class="box"><div class="big">${r[1]}</div><h2>LEVEL UP!</h2><p style="font-size:1.3rem;font-weight:800;margin:4px 0">Level ${fx.L}</p>
+      <p>${fx.rankUp ? `Danh hiệu mới (new rank): <b>${esc(r[2])}</b>` : `Rank: ${esc(r[2])}`}</p>
+      <button class="btn gold block" style="margin-top:14px">Tiếp tục cày 💪</button></div>`;
+    document.body.appendChild(o);
+    o.querySelector("button").onclick = () => { o.remove(); next(); render(); };
+  }
+}
+function confetti() {
+  const cols = ["#ffb800", "#7c4dff", "#00c2ff", "#ff4d6d", "#00c48c", "#fff"];
+  for (let i = 0; i < 70; i++) { const c = document.createElement("i"); c.className = "confetti";
+    c.style.cssText = `left:${Math.random() * 100}vw;background:${cols[i % cols.length]};animation-duration:${1.6 + Math.random() * 1.6}s;animation-delay:${Math.random() * .4}s`;
+    document.body.appendChild(c); setTimeout(() => c.remove(), 3800); }
+}
+let AC = null;
+function sfx(kind) {
+  if (S.sound === false) return;
+  try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume();
+    const seq = {ok: [[660, .07], [990, .12]], bad: [[200, .18]], coin: [[988, .06], [1319, .14]], lvl: [[523, .09], [659, .09], [784, .09], [1047, .3]], pomo: [[784, .15], [659, .15], [784, .15], [1047, .35]]}[kind];
+    let t = AC.currentTime;
+    seq.forEach(([f, dur]) => { const o = AC.createOscillator(), gn = AC.createGain(); o.type = "triangle"; o.frequency.value = f;
+      gn.gain.setValueAtTime(.13, t); gn.gain.exponentialRampToValueAtTime(.001, t + dur); o.connect(gn); gn.connect(AC.destination); o.start(t); o.stop(t + dur + .02); t += dur * .85; });
+  } catch (e) {}
+}
+function hud() {
+  const li = lvlInfo(S.g.xp);
+  return `<button class="hud" data-hud><span class="lvb">Lv ${li.L}</span><span class="xpbar"><i style="width:${li.cur / li.need * 100}%"></i></span>
+    <span class="small muted" style="white-space:nowrap">${li.cur}/${li.need}</span><span class="small" style="font-weight:800">🔥${streak()}</span></button>`;
+}
+function bindHud() { document.querySelectorAll("[data-hud]").forEach(b => b.onclick = () => go({tab: "home"})); }
+
+/* ========== Pomodoro (focus timer) ========== */
+// Stored as an end timestamp, so it keeps counting while the app is closed or the phone is locked.
+function pomo() { return S.pomo || (S.pomo = {focus: 25, brk: 5, mode: "focus", end: 0, left: 0}); }
+function pomoLeft() { const p = pomo(); return p.end ? Math.max(0, (p.end - Date.now()) / 1000) : p.left; }
+function pomoStart() { const p = pomo(); const sec = p.left > 0 ? p.left : (p.mode === "focus" ? p.focus : p.brk) * 60; p.end = Date.now() + sec * 1000; p.left = 0; save(); pomoTick(); }
+function pomoPause() { const p = pomo(); p.left = pomoLeft(); p.end = 0; save(); pomoTick(); }
+function pomoReset(mode) { const p = pomo(); p.mode = mode || p.mode; p.end = 0; p.left = 0; save(); pomoTick(); }
+let pomoId = null;
+function pomoTick() {
+  const p = pomo();
+  if (p.end && Date.now() >= p.end) {
+    if (p.mode === "focus") { S.g.pomos++; markActive(); if (!(view.tab === "mock" && view.mode === "exam")) { sfx("pomo"); confetti(); }
+      FXQ.unshift({t: "banner", i: "🍅", h: "Xong 1 pomodoro! +30 XP", s: "Nghỉ " + p.brk + " phút nhé (take a break)"});
+      p.mode = "brk"; p.end = 0; p.left = 0; award(30, {pomo: 1}); }
+    else { sfx("coin"); FXQ.push({t: "banner", i: "⏰", h: "Hết giờ nghỉ!", s: "Bắt đầu pomodoro mới nào"}); p.mode = "focus"; p.end = 0; p.left = 0; save(); runFX(); }
+  }
+  const el = $("#pomoPill");
+  if (el) { const on = !!p.end, show = (on || p.left > 0) && !(view.tab === "mock" && view.mode === "exam");
+    el.hidden = !show; if (show) el.innerHTML = `${p.mode === "focus" ? "🍅" : "☕"} <b>${clock(pomoLeft()).slice(2)}</b>${on ? "" : " ⏸"}`; }
+  const big = $("#pomoBig"); if (big) big.textContent = clock(pomoLeft() || (p.mode === "focus" ? p.focus : p.brk) * 60).slice(2);
+  if (p.end && !pomoId) pomoId = setInterval(pomoTick, 1000);
+  if (!p.end && pomoId) { clearInterval(pomoId); pomoId = null; }
+}
+function pomoSheet() {
+  const o = document.createElement("div"); o.className = "overlay";
+  const draw = () => { const p = pomo(), on = !!p.end, paused = !on && p.left > 0;
+    o.innerHTML = `<div class="sheet center"><div class="row" style="justify-content:space-between"><h3 style="margin:0">🍅 Pomodoro</h3><button class="chip" id="poC">Đóng</button></div>
+      <div class="seg" style="grid-template-columns:1fr 1fr"><button class="${p.mode === "focus" ? "on" : ""}" data-pm="focus">🍅 Focus (tập trung)</button><button class="${p.mode === "brk" ? "on" : ""}" data-pm="brk">☕ Break (nghỉ)</button></div>
+      <div id="pomoBig" style="font-size:4rem;font-weight:900;font-variant-numeric:tabular-nums;margin:14px 0 4px">--:--</div>
+      <p class="muted small">${p.mode === "focus" ? "Tập trung học, không lướt điện thoại. Xong được <b>+30 XP</b>." : "Đứng dậy, uống nước, thả lỏng mắt."}</p>
+      <div class="grid2" style="margin:12px 0">${on ? `<button class="btn sec" id="poP">⏸ Tạm dừng</button>` : `<button class="btn" id="poS">▶ ${paused ? "Tiếp tục" : "Bắt đầu"}</button>`}
+        <button class="btn ghost" id="poR">↺ Đặt lại</button></div>
+      <div class="switch"><span class="small">Focus</span><div class="chips">${[15, 25, 45, 50].map(m => `<button class="chip ${p.focus === m ? "on" : ""}" data-pf="${m}">${m}′</button>`).join("")}</div></div>
+      <div class="switch"><span class="small">Break</span><div class="chips">${[5, 10, 15].map(m => `<button class="chip ${p.brk === m ? "on" : ""}" data-pb="${m}">${m}′</button>`).join("")}</div></div>
+      <p class="muted small">Hôm nay: ${day().pomo || 0} 🍅 · Tổng: ${S.g.pomos} 🍅. Đồng hồ vẫn chạy khi khoá màn hình hoặc chuyển tab.</p></div>`;
+    o.querySelector("#poC").onclick = () => o.remove();
+    if (o.querySelector("#poS")) o.querySelector("#poS").onclick = () => { pomoStart(); draw(); };
+    if (o.querySelector("#poP")) o.querySelector("#poP").onclick = () => { pomoPause(); draw(); };
+    o.querySelector("#poR").onclick = () => { pomoReset(); draw(); };
+    o.querySelectorAll("[data-pm]").forEach(b => b.onclick = () => { pomoReset(b.dataset.pm); draw(); });
+    o.querySelectorAll("[data-pf]").forEach(b => b.onclick = () => { p.focus = +b.dataset.pf; if (!p.end && p.mode === "focus") p.left = 0; save(); draw(); });
+    o.querySelectorAll("[data-pb]").forEach(b => b.onclick = () => { p.brk = +b.dataset.pb; if (!p.end && p.mode === "brk") p.left = 0; save(); draw(); });
+    pomoTick(); };
+  o.onclick = e => { if (e.target === o) o.remove(); };
+  document.body.appendChild(o); draw();
+}
+
 /* Spaced repetition for questions: a wrong answer puts the question in box 1 (due today). */
 function record(q, ok) {
   const r = S.qs[q.id] || (S.qs[q.id] = {n: 0, c: 0}); r.n++; if (ok) r.c++; r.last = ok ? 1 : 0;
@@ -218,20 +506,14 @@ function domainStats() {
 }
 
 /* ========== Router & tabs ========== */
-const TABS = [
-  ["home", "Home", '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>'],
-  ["practice", "Luyện", '<path d="M4 5h16M4 12h16M4 19h10"/><circle cx="19" cy="19" r="2"/>'],
-  ["mock", "Thi thử", '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/>'],
-  ["listen", "Học", '<path d="M2 5h6a4 4 0 0 1 4 4v11a3 3 0 0 0-3-3H2z"/><path d="M22 5h-6a4 4 0 0 0-4 4v11a3 3 0 0 1 3-3h7z"/>'],
-  ["cards", "Thẻ", '<rect x="3" y="6" width="14" height="14" rx="2"/><path d="M7 3h12a2 2 0 0 1 2 2v12"/>'],
-];
+const TABS = [["home", "Map", "🗺️"], ["practice", "Luyện", "⚔️"], ["mock", "Boss", "👹"], ["listen", "Học", "📚"], ["cards", "Thẻ", "🃏"]];
 let view = {tab: "home"};
 let timerId = null;
 function go(v) { stopTimer(); view = v; render(); window.scrollTo(0, 0); }
 function renderTabs() {
   const due = dueQs().length;
   $("#tabs").innerHTML = TABS.map(([k, label, ic]) => `<button data-tab="${k}" class="${view.tab === k ? "on" : ""}" aria-label="${label}">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ic}</svg>${label}
+    <span class="em">${ic}</span>${label}
     ${k === "practice" && due ? `<span class="badge">${due}</span>` : ""}</button>`).join("");
   $("#tabs").querySelectorAll("button").forEach(b => b.onclick = () => {
     if (view.tab === "mock" && view.mode === "exam") { pauseExam(); }
@@ -244,7 +526,7 @@ function render() {
   document.documentElement.dataset.theme = S.theme || "";
   renderTabs();
   ({home: Home, practice: Practice, mock: Mock, listen: Listen, cards: Cards})[view.tab]();
-  renderPlayer();
+  renderPlayer(); bindHud(); pomoTick(); setTimeout(runFX, 300);
 }
 
 /* ========== Shared question renderer ========== */
@@ -294,58 +576,99 @@ function ring(val, max, color) {
 }
 function nextStep(ds) {
   const due = dueQs().length;
-  if (due) return {t: `Ôn ${due} câu sai đến hạn`, s: "Ôn lại đúng lúc sắp quên giúp nhớ lâu hơn.", go: () => startPractice({review: true})};
+  if (due) return {i: "♻️", t: `Ôn ${due} câu sai đến hạn`, s: "Review x1.5 XP · ôn đúng lúc sắp quên giúp nhớ lâu hơn.", go: () => startPractice({review: true})};
   const tried = Object.keys(DOMAINS).filter(d => ds[d].n);
   const fresh = Object.keys(DOMAINS).find(d => !ds[d].n);
-  if (fresh && tried.length < 5) return {t: `Luyện 10 câu D${fresh}`, s: `${DOMAINS[fresh][1]}: bạn chưa làm câu nào.`, go: () => { pf = {d: +fresh, s: "", size: 10}; startPractice({}); }};
+  if (fresh && tried.length < 5) return {i: ZONES[fresh][0], d: +fresh, t: `Khám phá ${ZONES[fresh][1]} (D${fresh})`, s: `${DOMAINS[fresh][1]}: vùng mới, chưa làm câu nào.`, go: () => { pf = {d: +fresh, s: "", size: 10}; startPractice({}); }};
   const weak = tried.sort((a, b) => ds[a].c / ds[a].n - ds[b].c / ds[b].n)[0];
   const mocksDone = EXAMS.filter(x => (mk(x.id).attempts || []).length).length;
   if (ALL.filter(q => S.qs[q.id]).length >= 120 && mocksDone < 4) { const id = EXAMS.find(x => !(mk(x.id).attempts || []).length).id;
-    return {t: `Làm Mock ${id}`, s: "60 câu, 120 phút, giống thi thật.", go: () => go({tab: "mock"})}; }
-  return {t: `Luyện 10 câu D${weak}`, s: `Domain yếu nhất: ${DOMAINS[weak][1]} (${pct(ds[weak].c, ds[weak].n)}%).`, go: () => { pf = {d: +weak, s: "", size: 10}; startPractice({}); }};
+    return {i: BOSSES[id][0], boss: id, t: `Đánh Boss ${id}: ${BOSSES[id][1]}`, s: "Mock exam 60 câu, 120 phút, giống thi thật.", go: () => go({tab: "mock"})}; }
+  return {i: ZONES[weak][0], d: +weak, t: `Cày ${ZONES[weak][1]} (D${weak})`, s: `Vùng yếu nhất: ${DOMAINS[weak][1]} (${pct(ds[weak].c, ds[weak].n)}%).`, go: () => { pf = {d: +weak, s: "", size: 10}; startPractice({}); }};
 }
 function Home() {
   const ds = domainStats(), est = estimate(), ready = readiness(), step = nextStep(ds);
-  const seen = ALL.filter(q => S.qs[q.id]).length, known = GLOSS.filter(g => (S.cards[cardKey(g)] || {}).box >= 3).length;
   const standalone = navigator.standalone || matchMedia("(display-mode: standalone)").matches;
   const color = est == null ? "var(--line)" : est >= 800 ? "var(--ok)" : est >= PASS ? "var(--warn)" : "var(--bad)";
-  const tried = Object.keys(DOMAINS).filter(d => ds[d].n), weakest = tried.length ? tried.sort((a, b) => ds[a].c / ds[a].n - ds[b].c / ds[b].n)[0] : null;
+  const li = lvlInfo(S.g.xp), rk = rankOf(li.L), nextRank = RANKS.find(r => r[0] > li.L);
+  const q = quests(), d = day(), nb = Object.keys(S.g.badges).length;
+  const stars = Object.keys(DOMAINS).reduce((s, k) => s + zoneStars(ds[k]), 0);
+  // Map path: zones and bosses in study order. The recommended next node pulses.
+  const recD = (step.d != null) ? step.d : null, recB = step.boss || null;
+  const path = [["z", 1], ["z", 2], ["b", 1], ["z", 3], ["z", 4], ["b", 2], ["z", 5], ["b", 3], ["b", 4]];
+  const pos = ["l", "r", "c", "l", "r", "c", "l", "r", "c"];
+  const node = ([t, k], i) => {
+    if (t === "z") { const z = ZONES[k], x = ds[k], p = pct(x.c, x.n);
+      return `<div class="mnode ${pos[i]}"><button data-zone="${k}"><span class="orb ${recD == k ? "rec" : ""}" style="--zc:${z[3]}">${z[0]}</span>
+        <span class="mname">D${k} · ${z[1]}</span><span class="msub">${x.seen}/${x.total} câu${x.n ? " · " + p + "%" : ""}</span>${starsHTML(zoneStars(x))}</button></div>`; }
+    const b = BOSSES[k], m = mk(k), best = Math.max(0, ...m.attempts.map(a => a.score)), dead = bossDead(k);
+    return `<div class="mnode ${pos[i]}"><button data-boss="${k}"><span class="orb boss ${dead ? "dead" : ""} ${recB == k ? "rec" : ""}">${b[0]}</span>
+      <span class="mname">Boss ${k} · ${b[1]}</span><span class="msub">${dead ? "Đã hạ ✓ · best " + best : m.attempts.length ? "Best " + best + " · cần 720" : "Mock " + k + " · 60 câu"}</span></button></div>`;
+  };
   $("#app").innerHTML = `
-  <div class="row" style="justify-content:space-between;margin-top:6px"><h1 style="margin:0">Tiến độ</h1>
-    <button class="iconbtn" id="hSet" aria-label="Cài đặt">⚙︎</button></div>
-  ${standalone || S.hideInstall ? "" : `<div class="hint row" style="justify-content:space-between"><span>📲 Safari → Share → <b>Add to Home Screen</b></span><button class="iconbtn sm" id="hHide" aria-label="Ẩn">✕</button></div>`}
+  ${standalone || S.hideInstall ? "" : `<div class="hint row" style="justify-content:space-between;margin-top:6px"><span>📲 Safari → Share → <b>Add to Home Screen</b></span><button class="iconbtn sm" id="hHide" aria-label="Ẩn">✕</button></div>`}
+  <div class="player-card" style="margin-top:10px">
+    <div class="row" style="gap:14px;position:relative;z-index:1">
+      <div class="avatar">${rk[1]}<span class="lv">Lv ${li.L}</span></div>
+      <div style="flex:1;min-width:0"><div style="font-weight:900;font-size:1.15rem">${esc(rk[2])}</div>
+        <div style="font-size:.8rem;opacity:.85;margin-bottom:6px">${li.cur}/${li.need} XP → Lv ${li.L + 1}${nextRank ? ` · rank mới ở Lv ${nextRank[0]}` : ""}</div>
+        <div class="xpbar"><i style="width:${li.cur / li.need * 100}%"></i></div></div>
+      <button class="iconbtn" id="hSet" aria-label="Cài đặt" style="background:rgba(255,255,255,.18);border:0;color:#fff;align-self:flex-start">⚙︎</button>
+    </div>
+    <div class="pills" style="position:relative;z-index:1"><span class="pill">🔥 ${streak()} ngày</span><span class="pill">⭐ ${stars}/15 sao</span>
+      <span class="pill">🏅 ${nb}/${BADGES.length}</span><span class="pill">💎 ${S.g.xp} XP</span></div>
+  </div>
+  <button class="cta" id="hNext"><span class="ic">${step.i || "⚔️"}</span><span><b>${step.t} →</b><span>${step.s}</span></span></button>
+
+  <div class="row" style="justify-content:space-between"><h2 style="margin:14px 0 4px">📜 Daily quests</h2><span class="muted small">reset 0h</span></div>
+  <div class="card" style="padding:6px 14px 12px">${q.ids.map(id => { const [ic, label, key, target, rew] = QUESTS[id], v = Math.min(target, d[key] || 0), done = q.done[id];
+    return `<div class="quest ${done ? "done" : ""}" data-quest="${id}"><span class="qi">${done ? "✅" : ic}</span><span class="qt">${label}</span><span class="qr">${done ? "✓" : "+" + rew}</span>
+      <span class="row" style="gap:8px"><span class="bar" style="flex:1"><i style="width:${v / target * 100}%"></i></span><span class="small muted">${v}/${target}</span></span></div>`; }).join("")}
+    <div class="chest ${q.chest ? "open" : ""}"><span class="ci">${q.chest ? "🎉" : "🎁"}</span><span>${q.chest ? `Đã mở rương hôm nay: <b>+${CHEST_XP} XP</b>. Mai quay lại nhé!` : `Xong cả 3 quest → mở rương <b>+${CHEST_XP} XP</b>`}</span></div>
+  </div>
+
+  <button class="card row" id="hPomo" style="gap:12px;align-items:center">
+    <span style="font-size:2rem">🍅</span><span style="flex:1"><b>Pomodoro</b><span class="muted small" style="display:block">${pomo().end ? (pomo().mode === "focus" ? "Đang focus" : "Đang nghỉ") + " · còn " + clock(pomoLeft()).slice(2) : `${pomo().focus} phút focus = +30 XP · hôm nay ${d.pomo || 0} 🍅`}</span></span>
+    <span class="btn" style="min-height:38px;padding:8px 14px">${pomo().end ? "Mở" : "Start"}</span></button>
+
+  <h2>🗺️ World map</h2>
+  <p class="muted small" style="margin-top:-4px">Chạm vùng (zone) để luyện 10 câu domain đó · ★ = độ thành thạo · Boss = mock exam.</p>
+  <div class="map">${path.map(node).join("")}</div>
+
+  <h2>🏅 Huy hiệu (badges)</h2>
+  <div class="badges">${BADGES.map(([id, ic, name]) => `<button class="bdg ${S.g.badges[id] ? "" : "off"}" data-bdg="${id}" aria-label="${esc(name)}">${ic}</button>`).join("")}</div>
+
+  <h2>📈 Sức mạnh thi (exam power)</h2>
   <div class="card hero">
     <div class="ringwrap">${ring(est, 1000, color)}<div class="ringtxt"><b>${est == null ? "–" : est}</b><span>/1000</span></div></div>
-    <div><div class="muted small">Điểm ước tính</div>
+    <div><div class="muted small">Điểm ước tính (estimate)</div>
       <p class="small" style="margin:4px 0 8px">${est == null ? "Làm ít nhất 20 câu để có ước tính." : est >= PASS ? "Trên mức đậu 720." : `Còn thiếu ${PASS - est} điểm để đậu.`}</p>
       <span class="tag ${ready.cls}">${ready.short}</span></div>
   </div>
-  <div class="stats3">
-    <div><b>🔥 ${streak()}</b><span>ngày liên tục</span></div>
-    <div><b>${seen}<small>/${ALL.length}</small></b><span>câu đã làm</span></div>
-    <div><b>${known}<small>/${GLOSS.length}</small></b><span>thẻ đã thuộc</span></div>
-  </div>
-  <button class="card next" id="hNext"><span class="muted small">Nên làm tiếp</span><b>${step.t} →</b><span class="small muted">${step.s}</span></button>
-  <h2>Theo domain</h2>
-  <div class="card">${Object.keys(DOMAINS).map(d => { const x = ds[d], p = pct(x.c, x.n);
-    return `<button class="drow" data-hd="${d}"><span class="dl"><b>D${d}</b> ${esc(DOMAINS[d][1])}${d === weakest && tried.length > 1 ? ' <span class="tag bad">yếu nhất</span>' : ""}</span>
-      <span class="dv">${x.n ? p + "%" : "–"}</span>
-      <span class="bar ${!x.n ? "" : p >= 80 ? "ok" : p >= 70 ? "warn" : "bad"}"><i style="width:${x.n ? p : 0}%"></i></span></button>`; }).join("")}
-    <p class="muted small" style="margin:8px 0 0">Chạm vào một domain để luyện. Mục tiêu: mỗi domain ≥ 70%.</p></div>
-  <h2>Thi thử</h2>
-  <div class="mocks4">${EXAMS.map(x => { const a = (mk(x.id).attempts || []).slice(-1)[0];
-    return `<button data-hm="${x.id}"><span class="muted small">Mock ${x.id}</span><b class="${a ? (a.score >= PASS ? "okc" : "badc") : "muted"}">${a ? a.score : "–"}</b></button>`; }).join("")}</div>
   <p class="muted small">${ready.hint}</p>`;
   $("#hNext").onclick = step.go;
   $("#hSet").onclick = settingsSheet;
+  $("#hPomo").onclick = pomoSheet;
   if ($("#hHide")) $("#hHide").onclick = () => { S.hideInstall = 1; save(); Home(); };
-  document.querySelectorAll("[data-hd]").forEach(b => b.onclick = () => { pf = {d: +b.dataset.hd, s: "", size: 10}; startPractice({}); });
-  document.querySelectorAll("[data-hm]").forEach(b => b.onclick = () => go({tab: "mock"}));
+  document.querySelectorAll("[data-zone]").forEach(b => b.onclick = () => { pf = {d: +b.dataset.zone, s: "", size: 10}; startPractice({}); });
+  document.querySelectorAll("[data-boss]").forEach(b => b.onclick = () => go({tab: "mock"}));
+  document.querySelectorAll("[data-bdg]").forEach(b => b.onclick = () => { const x = BADGES.find(y => y[0] === b.dataset.bdg);
+    toast(`${x[1]} ${x[2]}: ${x[3]}${S.g.badges[x[0]] ? " ✓ " + S.g.badges[x[0]] : " (chưa mở)"}`); });
+  document.querySelectorAll("[data-quest]").forEach(b => b.onclick = () => questGo(b.dataset.quest));
+  if (S.g.migrated && !S.g.migratedSeen) { S.g.migratedSeen = 1; save();
+    FXQ.push({t: "banner", i: "🎮", h: "Chào mừng tới CCAR-F Quest!", s: `Tiến độ cũ đã đổi thành ${S.g.migrated} XP`}); }
+}
+function questGo(id) {
+  const prac = d => { pf = {d: d || 0, s: "", size: 10}; startPractice({}); };
+  ({correct: () => prac(0), combo: () => prac(0), sessions: () => prac(0), review: () => dueQs().length ? startPractice({review: true}) : prac(0),
+    cards: () => go({tab: "cards"}), read: () => { S.learnSub = "read"; go({tab: "listen"}); }, listen: () => { S.learnSub = "listen"; go({tab: "listen"}); },
+    pomo: pomoSheet})[id]();
 }
 function settingsSheet() {
   const o = document.createElement("div"); o.className = "overlay";
   o.innerHTML = `<div class="sheet"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Cài đặt</h3><button class="chip" id="sC">Đóng</button></div>
     <div class="switch"><span>Hiện tiếng Việt</span><button class="toggle ${S.showVN ? "on" : ""}" id="sVN" aria-label="VN"></button></div>
+    <div class="switch"><span>Âm thanh game (sound)</span><button class="toggle ${S.sound !== false ? "on" : ""}" id="sSnd" aria-label="Sound"></button></div>
     <div class="switch"><span>Giao diện</span><select id="sTheme"><option value="">Theo máy</option><option value="light">Sáng</option><option value="dark">Tối</option></select></div>
     <div class="grid2" style="margin-top:8px"><button class="btn sec" id="sExp">Export backup</button><button class="btn sec" id="sImp">Import backup</button></div>
     <input type="file" id="sFile" accept="application/json,.json" hidden>
@@ -358,11 +681,12 @@ function settingsSheet() {
   o.onclick = e => { if (e.target === o) close(); };
   o.querySelector("#sC").onclick = close;
   o.querySelector("#sVN").onclick = e => { S.showVN = !S.showVN; save(); e.target.classList.toggle("on", S.showVN); };
+  o.querySelector("#sSnd").onclick = e => { S.sound = S.sound === false; save(); e.target.classList.toggle("on", S.sound !== false); sfx("coin"); };
   const th = o.querySelector("#sTheme"); th.value = S.theme || ""; th.onchange = e => { S.theme = e.target.value; save(); document.documentElement.dataset.theme = S.theme; };
   o.querySelector("#sExp").onclick = exportData;
   o.querySelector("#sImp").onclick = () => o.querySelector("#sFile").click();
   o.querySelector("#sFile").onchange = e => { importData(e); o.remove(); };
-  o.querySelector("#sReset").onclick = () => { if (confirm("Xoá toàn bộ tiến độ? Không hoàn tác được.")) { localStorage.removeItem(KEY); S = load(); close(); toast("Đã reset"); } };
+  o.querySelector("#sReset").onclick = () => { if (confirm("Xoá toàn bộ tiến độ? Không hoàn tác được.")) { localStorage.removeItem(KEY); S = load(); ensureGame(); close(); toast("Đã reset"); } };
 }
 function readiness() {
   const first = id => (S.mocks[id] && S.mocks[id].attempts || [])[0];
@@ -389,7 +713,7 @@ function importData(e) {
   const f = e.target.files[0]; if (!f) return;
   f.text().then(t => { const j = JSON.parse(t); if (j.app !== "ccarf-practice" || !j.data) throw 0;
     if (!confirm("Thay tiến độ hiện tại bằng file backup này?")) return;
-    S = Object.assign(load(), j.data); save(); render(); toast("Đã import backup ✓"); })
+    S = Object.assign(load(), j.data); ensureGame(); save(); render(); toast("Đã import backup ✓"); })
    .catch(() => toast("File không hợp lệ (invalid file)"));
   e.target.value = "";
 }
@@ -400,17 +724,17 @@ let pf = {d: 0, s: "", size: 10};
 function Practice() {
   if (P) return practiceQ();
   const due = dueQs().length, pool = practicePool(), ds = domainStats();
-  $("#app").innerHTML = `<h1>Luyện tập</h1>
+  $("#app").innerHTML = `${hud()}<h1>⚔️ Luyện tập</h1>
    ${due ? `<button class="card next" id="pRev"><span class="muted small">Đến hạn ôn</span><b>Ôn ${due} câu sai →</b></button>` : ""}
    <h2>Chọn domain</h2>
    <div class="card">${[0, 1, 2, 3, 4, 5].map(d => `<button class="drow pick1 ${pf.d === d ? "sel" : ""}" data-d="${d}">
-      <span class="dl">${d ? `<b>D${d}</b> ${esc(DOMAINS[d][1])}` : "<b>Tất cả domain</b>"}</span>
-      <span class="dv">${d ? (ds[d].n ? pct(ds[d].c, ds[d].n) + "%" : "–") : ""}</span></button>`).join("")}</div>
+      <span class="dl">${d ? `${ZONES[d][0]} <b>D${d}</b> ${esc(DOMAINS[d][1])}` : "🌐 <b>Tất cả domain</b>"}</span>
+      <span class="dv">${d ? starsHTML(zoneStars(ds[d])) + " " + (ds[d].n ? pct(ds[d].c, ds[d].n) + "%" : "–") : ""}</span></button>`).join("")}</div>
    <div class="seg">${[10, 20, 30].map(n => `<button class="${pf.size === n ? "on" : ""}" data-n="${n}">${n} câu</button>`).join("")}</div>
    <details class="small" style="margin:10px 2px"><summary>Lọc theo scenario${pf.s ? ": " + esc(SCEN[pf.s].n) : ""}</summary>
      <div class="chips" style="flex-wrap:wrap;margin-top:8px"><button class="chip ${!pf.s ? "on" : ""}" data-s="">Tất cả</button>${Object.keys(SCEN).map(s => `<button class="chip ${pf.s === s ? "on" : ""}" data-s="${s}">${esc(SCEN[s].n)}</button>`).join("")}</div></details>
    <button class="btn block" id="pGo" ${pool.length ? "" : "disabled"}>Bắt đầu ${Math.min(pf.size, pool.length)} câu</button>
-   <p class="muted small center">Câu chưa làm và câu hay sai được ưu tiên.</p>`;
+   <p class="muted small center">Đúng +10 XP · combo 🔥 thêm bonus · ôn câu sai +15 XP · xong lượt +20 XP.</p>`;
   document.querySelectorAll("[data-d]").forEach(b => b.onclick = () => { pf.d = +b.dataset.d; Practice(); });
   document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { pf.s = b.dataset.s; Practice(); });
   document.querySelectorAll("[data-n]").forEach(b => b.onclick = () => { pf.size = +b.dataset.n; Practice(); });
@@ -428,7 +752,7 @@ function startPractice(o) {
     list = shuffle(list);
   }
   if (!list.length) return toast("Không có câu nào");
-  P = {list, cur: 0, picked: [], checked: false, right: 0, review: !!o.review};
+  P = {list, cur: 0, picked: [], checked: false, right: 0, review: !!o.review, combo: 0, best: 0, xp: 0, last: 0};
   view = {tab: "practice"}; render(); window.scrollTo(0, 0);
 }
 function practiceQ() {
@@ -436,11 +760,13 @@ function practiceQ() {
   const q = P.list[P.cur], multi = q.a.length > 1;
   $("#app").innerHTML = `<div class="top row" style="justify-content:space-between">
      <button class="chip" id="pX">✕ Thoát</button>
-     <span class="small"><b>${P.cur + 1}</b>/${P.list.length} ${P.review ? '<span class="tag bad">Ôn câu sai</span>' : ""}</span>${vnBtn()}</div>
+     <span class="small"><b>${P.cur + 1}</b>/${P.list.length} ${P.review ? '<span class="tag bad">Ôn</span>' : ""}</span>
+     <span class="combo ${P.combo >= 2 && P.checked ? "hot" : ""}">${P.combo >= 2 ? "🔥x" + P.combo : ""}</span>
+     <span class="small" style="font-weight:800;color:var(--gold)">💎${P.xp}</span>${vnBtn()}</div>
    <div class="bar" style="margin:10px 0"><i style="width:${P.cur / P.list.length * 100}%"></i></div>
    <details class="small scen"><summary>D${q.d} · ${esc(SCEN[q.s].n)}</summary><p>${fmt(SCEN[q.s].d)}</p>${S.showVN ? `<p class="vn">${fmt(SCEN[q.s].dv)}</p>` : ""}</details>
    ${qHTML(q, P.picked, P.checked)}
-   ${P.checked ? explHTML(q, P.picked) : ""}
+   ${P.checked ? explHTML(q, P.picked).replace("</b> · Đáp án", `</b><span class="xpgain">+${P.last} XP</span>${P.combo >= 2 ? ` <span class="combo">🔥 combo x${P.combo}</span>` : ""} · Đáp án`) : ""}
    ${P.checked ? `<button class="btn block" id="pNext">${P.cur + 1 < P.list.length ? "Câu tiếp (next) →" : "Xem kết quả"}</button>`
      : `<button class="btn block" id="pCheck" ${P.picked.length === (multi ? 2 : 1) ? "" : "disabled"}>Kiểm tra (check)</button>`}`;
   $("#pX").onclick = () => { P = null; Practice(); };
@@ -448,21 +774,34 @@ function practiceQ() {
   if (!P.checked) bindOpts(q, P.picked, practiceQ);
   if ($("#pCheck")) $("#pCheck").onclick = () => {
     P.checked = true; const ok = sameSet(P.picked, q.a); if (ok) P.right++;
-    (P.review ? reviewResult : record)(q, ok); practiceQ();
+    (P.review ? reviewResult : record)(q, ok);
+    if (ok) { P.combo++; P.best = Math.max(P.best, P.combo); S.g.maxCombo = Math.max(S.g.maxCombo, P.combo); }
+    else P.combo = 0;
+    const xp = ok ? (P.review ? 15 : 10) + (P.combo >= 3 ? Math.min(10, (P.combo - 2) * 2) : 0) : 2;
+    P.last = xp; P.xp += xp; sfx(ok ? "ok" : "bad");
+    practiceQ();
+    award(xp, ok ? Object.assign({correct: 1, combo: P.combo}, P.review ? {review: 1} : {}) : (P.review ? {review: 1} : null));
     setTimeout(() => { const e = document.querySelector(".expl"); e && e.scrollIntoView({behavior: "smooth", block: "center"}); }, 50);
   };
   if ($("#pNext")) $("#pNext").onclick = () => { P.cur++; P.picked = []; P.checked = false; practiceQ(); window.scrollTo(0, 0); };
 }
 function practiceDone() {
-  const p = pct(P.right, P.list.length);
-  $("#app").innerHTML = `<h1>Xong rồi! 🎉</h1>
-   <div class="card center"><div class="stat">${P.right}/${P.list.length}</div><p class="muted">đúng ${p}%</p>
-   <div class="bar ${p >= 80 ? "ok" : p >= 70 ? "warn" : "bad"}"><i style="width:${p}%"></i></div></div>
-   <p class="small">${P.list.length - P.right ? `${P.list.length - P.right} câu sai đã vào danh sách ôn. Ngày mai mở tab Luyện để ôn lại.` : "Không sai câu nào. Tuyệt vời!"}</p>
-   <div class="grid2"><button class="btn sec" id="pAgain">Luyện tiếp</button><button class="btn" id="pHome">Về Home</button></div>`;
+  const p = pct(P.right, P.list.length), n = P.list.length, perfect = n >= 10 && P.right === n;
+  const bonus = 20 + (perfect ? 30 : 0);
+  if (perfect) S.g.perfect++;
+  const stars = p >= 90 ? 3 : p >= 70 ? 2 : p >= 50 ? 1 : 0;
+  $("#app").innerHTML = `<h1 class="center" style="margin-top:14px">${perfect ? "💯 PERFECT RUN!" : stars >= 2 ? "🎉 Victory!" : "💪 Xong lượt!"}</h1>
+   <div class="card center"><div style="font-size:2.4rem;letter-spacing:4px;color:var(--gold)">${[1, 2, 3].map(i => i <= stars ? "★" : "☆").join("")}</div>
+   <div class="stat">${P.right}/${n}</div><p class="muted">đúng ${p}%</p>
+   <div class="bar ${p >= 80 ? "ok" : p >= 70 ? "warn" : "bad"}"><i style="width:${p}%"></i></div>
+   <div class="stats3"><div><b>💎 ${P.xp + bonus}</b><span>XP nhận</span></div><div><b>🔥 ${P.best}</b><span>combo max</span></div><div><b>+${bonus}</b><span>bonus lượt</span></div></div></div>
+   <p class="small">${n - P.right ? `${n - P.right} câu sai đã vào danh sách ôn (review). Ngày mai ôn lại được x1.5 XP.` : "Không sai câu nào. Tuyệt vời!"}</p>
+   <div class="grid2"><button class="btn sec" id="pAgain">⚔️ Luyện tiếp</button><button class="btn" id="pHome">🗺️ Về Map</button></div>`;
   P = null;
   $("#pAgain").onclick = () => go({tab: "practice"});
   $("#pHome").onclick = () => go({tab: "home"});
+  if (stars >= 2) confetti();
+  award(bonus, {sessions: 1});
 }
 
 /* ========== Mock exams ========== */
@@ -470,18 +809,21 @@ function mk(id) { return S.mocks[id] || (S.mocks[id] = {attempts: []}); }
 function Mock() {
   if (view.mode === "exam") return examQ();
   if (view.mode === "result") return examResult();
-  $("#app").innerHTML = `<h1>Thi thử (mock exams)</h1>
-   <p class="muted small">60 câu · 120 phút · điểm /1000 · pass 720. Giống format thi thật: 4 scenarios × 15 câu. Thoát app thì đồng hồ tự dừng (auto-pause).</p>
+  $("#app").innerHTML = `${hud()}<h1>👹 Boss arena</h1>
+   <p class="muted small">Mỗi boss = 1 mock exam: 60 câu · 120 phút · điểm /1000. Đạt ≥ 720 là hạ boss (+100 XP, lần đầu thêm +150). Thoát app thì đồng hồ tự dừng (auto-pause).</p>
    ${EXAMS.map(x => { const m = mk(x.id), last = m.attempts[m.attempts.length - 1], running = m.cur != null && !m.done;
-     return `<div class="card"><div class="row" style="justify-content:space-between"><h3>Mock ${x.id}</h3>
-       ${last ? `<span class="tag ${last.score >= PASS ? "ok" : "bad"}">${last.score}/1000</span>` : '<span class="tag">Chưa làm</span>'}</div>
+     const b = BOSSES[x.id], dead = bossDead(x.id);
+     return `<div class="card"><div class="bosscard"><span class="orb boss ${dead ? "dead" : ""}">${b[0]}</span><div style="flex:1;min-width:0">
+       <div class="row" style="justify-content:space-between"><h3 style="margin:0">Boss ${x.id}</h3>
+       ${last ? `<span class="tag ${last.score >= PASS ? "ok" : "bad"}">${last.score}/1000</span>` : '<span class="tag">Chưa đánh</span>'}</div>
+       <div style="font-weight:800">${b[1]}</div><div class="muted small">${b[2]} · Mock ${x.id}${dead ? ' · <span class="okc">đã hạ ✓</span>' : ""}</div></div></div>
        <p class="muted small">${x.sc.map(s => esc(SCEN[s].n)).join(" · ")}</p>
        ${m.attempts.length ? `<p class="small">Đã làm ${m.attempts.length} lần · lần đầu: <b>${m.attempts[0].score}</b>${m.attempts[0].vn ? " (có VN)" : ""}</p>` : ""}
        ${running ? `<p class="small"><span class="tag warn">Đang làm dở</span> câu ${m.cur + 1}, còn ${clock(m.left)}</p>` : ""}
        <div class="grid2" style="margin-top:8px">
-         <button class="btn" data-start="${x.id}">${running ? "Làm tiếp" : m.attempts.length ? "Làm lại" : "Bắt đầu"}</button>
+         <button class="btn" data-start="${x.id}">${running ? "▶ Đánh tiếp" : m.attempts.length ? "⚔️ Đánh lại" : "⚔️ Vào trận"}</button>
          <button class="btn sec" data-res="${x.id}" ${last ? "" : "disabled"}>Xem kết quả</button></div></div>`; }).join("")}
-   <p class="muted small">Mẹo: làm Mock 3 và Mock 4 với VN off để biết đã sẵn sàng chưa.</p>`;
+   <p class="muted small">Mẹo: đánh Boss 3 và Boss 4 với VN off để biết đã sẵn sàng đi thi chưa.</p>`;
   document.querySelectorAll("[data-start]").forEach(b => b.onclick = () => {
     const id = +b.dataset.start, m = mk(id);
     if (m.cur == null || m.done) {
@@ -506,7 +848,7 @@ function startTimer() {
     if (m.left <= 0) { m.left = 0; submitExam(true); }
   }, 1000);
 }
-document.addEventListener("visibilitychange", () => { if (document.hidden) { pauseExam(); save(); } else if (view.mode === "exam") render(); });
+document.addEventListener("visibilitychange", () => { if (document.hidden) { pauseExam(); save(); } else { pomoTick(); if (view.mode === "exam" || view.tab === "home") render(); } });
 function examQ() {
   const id = view.id, m = mk(id), list = examList(id), i = m.cur, q = list[i], picked = m.ans[i] || [];
   if (m.paused) {
@@ -521,6 +863,8 @@ function examQ() {
   $("#app").innerHTML = `<div class="top row" style="justify-content:space-between">
      <button class="chip" id="ePause">⏸</button><span class="timer ${m.left < 600 ? "low" : ""}" id="timer">${clock(m.left)}</span>
      <button class="chip" id="eNav">${i + 1}/60 ▦</button>${vnBtn()}</div>
+   ${(() => { const left = 60 - Object.keys(m.ans).filter(k => m.ans[k].length).length;
+     return `<div class="boss-hp"><span style="font-size:1.3rem">${BOSSES[id][0]}</span><span class="hpbar"><i style="width:${left / 60 * 100}%"></i></span><span>HP ${left}/60</span></div>`; })()}
    ${first ? `<div class="card small" style="margin-top:12px"><b>Scenario ${Math.floor(i / 15) + 1}: ${esc(SCEN[q.s].n)}</b><p>${fmt(SCEN[q.s].d)}</p>${S.showVN ? `<p class="vn">${fmt(SCEN[q.s].dv)}</p>` : ""}</div>` : ""}
    <p style="margin-top:12px"><span class="muted small">Question ${i + 1}</span></p>
    ${qHTML(q, picked, false).replace(/^<details[\s\S]*?<\/details>/, "")}
@@ -560,10 +904,14 @@ function submitExam(timeUp) {
   const id = view.id, m = mk(id), list = examList(id); let c = 0; const dm = {};
   list.forEach((q, i) => { const ok = sameSet(m.ans[i] || [], q.a); if (ok) c++; const d = dm[q.d] || (dm[q.d] = [0, 0]); d[1]++; if (ok) d[0]++; record(q, ok); });
   const score = Math.round(c / list.length * 1000);
-  m.attempts.push({score, c, date: today(), vn: !!m.vn, dm, used: Math.round(EXAM_SEC - m.left)});
+  const firstKill = score >= PASS && !bossDead(id);
+  const xp = c * 3 + (score >= PASS ? 100 : 0) + (firstKill ? 150 : 0);
+  m.attempts.push({score, c, date: today(), vn: !!m.vn, dm, used: Math.round(EXAM_SEC - m.left), xp, kill: firstKill ? 1 : 0});
   m.done = true; m.last = {ans: m.ans, flags: m.flags}; save();
   if (timeUp) toast("Hết giờ! Bài đã được nộp tự động.");
   go({tab: "mock", mode: "result", id, filter: "wrong"});
+  if (score >= PASS) { confetti(); sfx("lvl"); }
+  award(xp, {correct: c});
 }
 function examResult() {
   const id = view.id, m = mk(id), a = m.attempts[m.attempts.length - 1], list = examList(id), st = m.last || {ans: {}, flags: {}};
@@ -571,7 +919,9 @@ function examResult() {
   const weakest = Object.entries(a.dm).sort((x, y) => x[1][0] / x[1][1] - y[1][0] / y[1][1])[0];
   const items = list.map((q, i) => [q, i]).filter(([q, i]) => view.filter === "all" || (view.filter === "flag" ? st.flags[i] : !sameSet(st.ans[i] || [], q.a)));
   $("#app").innerHTML = `<div class="top row" style="justify-content:space-between"><button class="chip" id="rB">← Mock</button><b>Kết quả Mock ${id}</b>${vnBtn()}</div>
-   <div class="card center" style="margin-top:12px"><div class="stat" style="font-size:2.4rem">${a.score}</div><p class="muted">/1000 · ${a.c}/60 đúng · ${clock(a.used)} đã dùng</p>
+   <div class="card center ${a.score >= PASS ? "victory" : "defeat"}" style="margin-top:12px"><div style="font-size:3rem">${a.score >= PASS ? "🏆" : BOSSES[id][0]}</div>
+    <div style="font-weight:900;font-size:1.3rem">${a.score >= PASS ? "BOSS DEFEATED!" : `${BOSSES[id][1]} vẫn còn sống`}</div>
+    <div class="stat" style="font-size:2.4rem">${a.score}</div><p class="muted">/1000 · ${a.c}/60 đúng · ${clock(a.used)} đã dùng${a.xp ? ` · <b>+${a.xp} XP</b>` : ""}</p>
     <p><span class="tag ${a.score >= PASS ? "ok" : "bad"}">${a.score >= PASS ? "PASS ✓ (≥ 720)" : "Chưa đạt (< 720)"}</span> ${a.vn ? '<span class="tag vn">có bật VN</span>' : ""}</p>
     <p class="muted small">Điểm ước tính (estimate), thi thật dùng scaled score.</p></div>
    <div class="card">${Object.keys(DOMAINS).map(d => { const [c, t] = a.dm[d] || [0, 0], p = pct(c, t);
@@ -592,8 +942,8 @@ function Cards() {
   const counts = d => { const deck = GLOSS.filter(g => !d || g[0] === d); return [deck.length, deck.filter(g => { const c = S.cards[cardKey(g)]; return !c || c.due <= today(); }).length]; };
   const weak = GLOSS.filter(g => (S.cards[cardKey(g)] || {}).box === 1).length;
   const known = GLOSS.filter(g => (S.cards[cardKey(g)] || {}).box >= 3).length;
-  $("#app").innerHTML = `<h1>Flashcards (thẻ ghi nhớ)</h1>
-   <p class="muted small">Thẻ hiện thuật ngữ tiếng Anh. Tự nói nghĩa tiếng Việt, rồi chạm để lật. Vuốt phải = nhớ rồi, vuốt trái = chưa nhớ.</p>
+  $("#app").innerHTML = `${hud()}<h1>🃏 Flashcards (thẻ ghi nhớ)</h1>
+   <p class="muted small">Thẻ hiện thuật ngữ tiếng Anh. Tự nói nghĩa tiếng Việt, rồi chạm để lật. Vuốt phải = nhớ rồi (+4 XP), vuốt trái = chưa nhớ (+1 XP).</p>
    <div class="grid2"><div class="card"><div class="muted small">Đã thuộc</div><div class="stat">${known}<span class="muted small"> / ${GLOSS.length}</span></div></div>
      <div class="card"><div class="muted small">Chưa nhớ</div><div class="stat">${weak}</div></div></div>
    <h2>Chọn bộ thẻ</h2>
@@ -609,9 +959,9 @@ function Cards() {
 }
 function cardQ() {
   if (C.cur >= C.list.length) {
-    $("#app").innerHTML = `<h1>Xong bộ thẻ 🎉</h1><div class="card center"><div class="stat">${C.ok}/${C.total}</div><p class="muted">nhớ ngay lần đầu</p></div>
+    $("#app").innerHTML = `<h1 class="center">Xong bộ thẻ 🎉</h1><div class="card center"><div class="stat">${C.ok}/${C.total}</div><p class="muted">nhớ ngay lần đầu</p><span class="xpgain">+10 XP bonus</span></div>
       <button class="btn block" id="cBack">Về danh sách thẻ</button>`;
-    C = null; markActive(); save(); $("#cBack").onclick = () => Cards(); return;
+    C = null; markActive(); save(); $("#cBack").onclick = () => Cards(); confetti(); award(10); return;
   }
   const g = C.list[C.cur];
   $("#app").innerHTML = `<div class="top row" style="justify-content:space-between"><button class="chip" id="cX">✕ Thoát</button><span class="small"><b>${C.cur + 1}</b>/${C.list.length}</span><span class="tag">Day ${g[0]} · D${DAY_DOMAIN[g[0]]}</span></div>
@@ -627,7 +977,7 @@ function cardQ() {
     const k = cardKey(g), c = S.cards[k] || (S.cards[k] = {box: 0});
     if (ok) { c.box = Math.min(5, (c.box || 0) + 1); c.due = addDays(today(), INT[c.box] || 1); if (!g._again) C.ok++; }
     else { c.box = 1; c.due = today(); g._again = 1; C.list.push(g); }
-    save(); C.cur++; C.flip = false; cardQ();
+    save(); C.cur++; C.flip = false; cardQ(); sfx(ok ? "ok" : "bad"); award(ok ? 4 : 1, {cards: 1});
   };
   if ($("#cNo")) { $("#cNo").onclick = () => answer(false); $("#cYes").onclick = () => answer(true); }
   // Swipe: right = remember, left = not yet (only after flipping).
@@ -685,7 +1035,8 @@ function readDoc() {
     <div class="grid2" style="margin-top:10px"><button class="btn ghost" id="dPrev" ${i > 0 ? "" : "disabled"}>← Bài trước</button><button class="btn ghost" id="dNext" ${i + 1 < list.length ? "" : "disabled"}>Bài sau →</button></div>`;
   $("#dB").onclick = () => { view.doc = null; Read(); };
   bindVN(readDoc);
-  $("#dDone").onclick = () => { S.read = S.read || {}; if (S.read[x.id]) delete S.read[x.id]; else { S.read[x.id] = today(); markActive(); } save();
+  $("#dDone").onclick = () => { S.read = S.read || {}; if (S.read[x.id]) delete S.read[x.id]; else { S.read[x.id] = today(); markActive();
+      if (!S.g.rx[x.id]) { S.g.rx[x.id] = 1; setTimeout(() => award(20, {read: 1}), 50); } } save();
     if (S.read[x.id] && i + 1 < list.length) { view.doc = list[i + 1].id; toast("✓ Đã đọc, sang bài tiếp"); window.scrollTo(0, 0); } readDoc(); };
   $("#dPrev").onclick = () => { view.doc = list[i - 1].id; readDoc(); window.scrollTo(0, 0); };
   $("#dNext").onclick = () => { view.doc = list[i + 1].id; readDoc(); window.scrollTo(0, 0); };
@@ -709,7 +1060,7 @@ function filtered() {
   return (TR || []).filter(t => t.cat === lf.cat && (!lf.d || t.d === lf.d) && (lf.cat !== "quiz" || ((!lf.ex || t.exam === lf.ex) &&
     (!lf.wrongOnly || (S.qs[t.id.slice(2)] || {}).box))));
 }
-const LH = sub => `<h1>Học</h1><div class="seg" style="grid-template-columns:1fr 1fr;margin:6px 0 12px">
+const LH = sub => `${hud()}<h1>📚 Học</h1><div class="seg" style="grid-template-columns:1fr 1fr;margin:6px 0 12px">
   <button class="${sub === "read" ? "on" : ""}" data-sub="read">📖 Đọc</button><button class="${sub === "listen" ? "on" : ""}" data-sub="listen">🎧 Nghe</button></div>`;
 function bindLH() { document.querySelectorAll("[data-sub]").forEach(b => b.onclick = () => { S.learnSub = b.dataset.sub; save(); view.doc = null; Listen(); window.scrollTo(0, 0); }); }
 function Listen() {
@@ -758,7 +1109,7 @@ function playIdx() {
   markActive(); save(); refreshListen();
 }
 function refreshListen() { renderPlayer(); if (view.tab === "listen" && TR) { const y = window.scrollY; Listen(); window.scrollTo(0, y); } }
-au.addEventListener("ended", () => { const t = PL.list[PL.idx]; if (t) { S.listen[t.id] = {done: 1}; save(); }
+au.addEventListener("ended", () => { const t = PL.list[PL.idx]; if (t) { const first = !(S.listen[t.id] || {}).done; S.listen[t.id] = {done: 1}; save(); if (first) award(8, {listen: 1}); }
   if (PL.idx + 1 < PL.list.length) { PL.idx++; playIdx(); } else refreshListen(); });
 au.addEventListener("play", refreshListen); au.addEventListener("pause", () => { savePos(); refreshListen(); });
 let lastSave = 0;
@@ -806,6 +1157,8 @@ async function downloadList(list) {
 /* ========== Boot ========== */
 if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
 loadTracks();
+ensureGame();
+$("#pomoPill").onclick = pomoSheet;
 const resumeMock = Object.keys(S.mocks).find(id => S.mocks[id].cur != null && !S.mocks[id].done);
 render();
 if (resumeMock) setTimeout(() => toast(`Mock ${resumeMock} đang làm dở, mở tab Thi thử để tiếp tục`), 400);

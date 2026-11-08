@@ -5,6 +5,8 @@
 > Câu hỏi là câu tự soạn để luyện tập, **không phải câu hỏi thi thật**. Phần exam guide là trích nguyên văn Section 6 của exam guide chính thức v1.0, kèm giải thích tiếng Việt.
 
 ## Tính năng
+- **Game mode (cày level)**: XP cho mỗi câu đúng, combo 🔥, level + rank (Prompt Newbie → Claude Architect Legend), 3 daily quests + rương 🎁, 20 huy hiệu (badges), World map 5 vùng = 5 domain (★ 1–3 sao), 4 boss = 4 mock exam (≥ 720 là hạ boss). Tiến độ cũ được đổi thành XP khi mở bản mới.
+- **Pomodoro 🍅**: focus 15/25/45/50 phút + break, chạy tiếp khi khoá màn hình, xong 1 pomodoro +30 XP.
 - **Luyện (practice)**: chọn domain / scenario, xem đáp án + giải thích EN/VN ngay.
 - **Ôn câu sai**: spaced repetition (ôn lại sau 1, 3, 7, 14 ngày).
 - **Thi thử (mock)**: 4 đề × 60 câu, 120 phút, điểm /1000, pass 720, biểu đồ theo domain.
@@ -15,7 +17,7 @@
 ## Cấu trúc
 | File | Vai trò |
 |---|---|
-| `index.html` | Toàn bộ app (HTML + CSS + JS) |
+| `index.html` | Toàn bộ app (HTML + CSS + JS), gồm game layer (`S.g` trong localStorage, nằm trong file export backup) |
 | `qbank.js` | Dữ liệu: câu hỏi, glossary, bài học, exam guide + giải thích VN |
 | `sw.js`, `manifest.webmanifest`, `icons/` | PWA: offline, icon Home Screen |
 | `tools/make-tracks.js` | Tạo `audio/tracks.json` (danh sách bài nghe + lời đọc) từ `qbank.js` |
