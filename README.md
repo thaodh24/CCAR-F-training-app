@@ -8,7 +8,7 @@
 - **Game mode (cày level)**: XP cho mỗi câu đúng, combo 🔥, level + rank (Prompt Newbie → Claude Architect Legend), 3 daily quests + rương 🎁, 20 huy hiệu (badges), World map 5 vùng = 5 domain (★ 1–3 sao), 4 boss = 4 mock exam (≥ 720 là hạ boss). Tiến độ cũ được đổi thành XP khi mở bản mới.
 - **Theme lofi**: ⚙︎ → Theme: Game, Latte ☕, Rainy night 🌧️, Matcha 🍵, Sunset café 🌅.
 - **Pomodoro 🍅**: focus 15/25/45/50 phút + break, chạy tiếp khi khoá màn hình, xong 1 pomodoro +30 XP.
-- **Luyện (practice)**: chọn domain / scenario, xem đáp án + giải thích EN/VN ngay.
+- **Luyện (practice)**: chọn 1 hoặc nhiều domain để trộn (vd D1 + D4 + D5), chọn số câu mỗi domain (5/10/15/20), lọc scenario, xem đáp án + giải thích EN/VN ngay.
 - **Ôn câu sai**: spaced repetition (ôn lại sau 1, 3, 7, 14 ngày).
 - **Thi thử (mock)**: 4 đề × 60 câu, 120 phút, điểm /1000, pass 720, biểu đồ theo domain.
 - **Thẻ (flashcards)**: 75 thuật ngữ EN → VN, vuốt trái/phải.
