@@ -22,13 +22,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The key gets the run id so a partial build can be saved too; restore takes the newest matching one.
+      - name: Cache key
+        id: key
+        run: echo "base=mp3-${{ hashFiles('audio/tracks.json') }}" >> "$GITHUB_OUTPUT"
+
       - name: Restore MP3 cache
-        id: mp3cache
         uses: actions/cache/restore@v4
         with:
           path: audio/mp3
-          key: mp3-${{ hashFiles('audio/tracks.json', 'tools/build_audio.py') }}
-          restore-keys: mp3-
+          key: ${{ steps.key.outputs.base }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            ${{ steps.key.outputs.base }}-
+            mp3-
 
       - uses: actions/setup-python@v5
         with:
@@ -39,16 +45,20 @@ jobs:
           pip install edge-tts==7.3.1
           which ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
 
+      # Few TTS calls at a time: Microsoft's free voice service throttles bursts ("No audio was received").
       - name: Build MP3s (only new or changed tracks)
+        id: build
+        env:
+          TTS_CONCURRENCY: "2"
         run: python tools/build_audio.py
 
-      # Save right away, so the MP3s are kept even if the Pages deploy below fails.
+      # Save even if the build step failed, so finished MP3s are not made again on the next run.
       - name: Save MP3 cache
-        if: steps.mp3cache.outputs.cache-hit != 'true'
+        if: always() && steps.build.conclusion != 'skipped' && steps.build.outputs.made != '0'
         uses: actions/cache/save@v4
         with:
           path: audio/mp3
-          key: mp3-${{ hashFiles('audio/tracks.json', 'tools/build_audio.py') }}
+          key: ${{ steps.key.outputs.base }}-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Collect site files
         run: |
