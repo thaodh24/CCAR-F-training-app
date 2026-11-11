@@ -1,6 +1,6 @@
 // Offline support. App files: served from cache, refreshed in the background.
 // MP3s: kept in a separate cache only when the user taps "Tải về" (download) in the Listen tab.
-const APP = "ccarf-app-v7", AUDIO = "ccarf-audio";
+const APP = "ccarf-app-v8", AUDIO = "ccarf-audio";
 const FILES = ["./", "./index.html", "./qbank.js", "./audio/tracks.json", "./audio/durations.json", "./manifest.webmanifest", "./icons/icon-180.png", "./icons/icon-192.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(APP).then(c => Promise.all(FILES.map(f => c.add(f).catch(() => {}))))); self.skipWaiting(); });
 self.addEventListener("activate", e => {

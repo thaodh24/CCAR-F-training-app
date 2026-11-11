@@ -345,7 +345,8 @@ const RANKS = [[1, "🐣", "Prompt Newbie"], [3, "🧪", "Token Apprentice"], [5
 const ZONES = {1: ["🏰", "Agent Citadel", "Thành trì Agent", "#7c4dff"], 2: ["⚒️", "Tool Forge", "Lò rèn Tool", "#ff7a1a"],
   3: ["💻", "Code Valley", "Thung lũng Code", "#00a884"], 4: ["🗼", "Prompt Tower", "Tháp Prompt", "#e0408a"], 5: ["🔮", "Context Caves", "Hang Context", "#1e88e5"]};
 const BOSSES = {1: ["🐉", "Hallucination Dragon", "Rồng Ảo Giác"], 2: ["🐍", "Context-Rot Hydra", "Mãng xà Context"],
-  3: ["🦾", "Rogue Agent", "Agent nổi loạn"], 4: ["👹", "Final Exam Lord", "Trùm cuối"]};
+  3: ["🦾", "Rogue Agent", "Agent nổi loạn"], 4: ["👹", "Final Exam Lord", "Trùm cuối"],
+  5: ["🌀", "Token Storm", "Bão Token"], 6: ["🗿", "The Proctor", "Giám thị"]};
 const lvlNeed = L => 100 + (L - 1) * 50;            // XP needed to go from level L to L+1
 function lvlInfo(xp) { let L = 1, base = 0; while (xp >= base + lvlNeed(L)) { base += lvlNeed(L); L++; } return {L, cur: xp - base, need: lvlNeed(L)}; }
 const rankOf = L => RANKS.filter(r => r[0] <= L).pop();
@@ -386,7 +387,7 @@ const BADGES = [
   ["perfect", "💯", "Perfect Run", "Lượt luyện ≥10 câu đúng 100%", () => S.g.perfect >= 1],
   ["seen50", "🧭", "Explorer", "Làm 50 câu khác nhau", () => Object.keys(S.qs).length >= 50],
   ["seen120", "🗺️", "Pathfinder", "Làm 120 câu khác nhau", () => Object.keys(S.qs).length >= 120],
-  ["seen240", "🌍", "Completionist", "Làm hết 240 câu", () => Object.keys(S.qs).length >= 240],
+  ["seen240", "🌍", "Completionist", `Làm hết ${ALL.length} câu`, () => ALL.every(q => S.qs[q.id])],
   ["streak3", "📅", "3-Day Streak", "Học 3 ngày liên tục", () => streak() >= 3],
   ["streak7", "⚡", "Week Warrior", "Học 7 ngày liên tục", () => streak() >= 7],
   ["cards25", "🃏", "Card Collector", "Thuộc 25 thẻ", () => GLOSS.filter(g => (S.cards[cardKey(g)] || {}).box >= 3).length >= 25],
@@ -398,7 +399,7 @@ const BADGES = [
   ["zone3", "⭐", "Zone Master", "1 vùng đạt 3 sao", () => { const ds = domainStats(); return Object.keys(DOMAINS).some(d => zoneStars(ds[d]) === 3); }],
   ["boss1", "⚔️", "Boss Slayer", "Hạ 1 boss (mock ≥ 720)", () => EXAMS.some(x => bossDead(x.id))],
   ["boss800", "🎖️", "Exam Ready", "Mock đạt ≥ 800", () => Object.values(S.mocks).some(m => (m.attempts || []).some(a => a.score >= 800))],
-  ["bossAll", "🏆", "Legend", "Hạ cả 4 boss", () => EXAMS.every(x => bossDead(x.id))],
+  ["bossAll", "🏆", "Legend", `Hạ cả ${EXAMS.length} boss`, () => EXAMS.every(x => bossDead(x.id))],
   ["lvl10", "👑", "Level 10", "Lên level 10", () => lvlInfo(S.g.xp).L >= 10],
 ];
 
@@ -648,7 +649,7 @@ function nextStep(ds) {
   if (fresh && tried.length < 5) return {i: ZONES[fresh][0], d: +fresh, t: `Khám phá ${ZONES[fresh][1]} (D${fresh})`, s: `${DOMAINS[fresh][1]}: vùng mới, chưa làm câu nào.`, go: () => { pf = {d: +fresh, s: "", size: 10}; startPractice({}); }};
   const weak = tried.sort((a, b) => ds[a].c / ds[a].n - ds[b].c / ds[b].n)[0];
   const mocksDone = EXAMS.filter(x => (mk(x.id).attempts || []).length).length;
-  if (ALL.filter(q => S.qs[q.id]).length >= 120 && mocksDone < 4) { const id = EXAMS.find(x => !(mk(x.id).attempts || []).length).id;
+  if (ALL.filter(q => S.qs[q.id]).length >= 120 && mocksDone < EXAMS.length) { const id = EXAMS.find(x => !(mk(x.id).attempts || []).length).id;
     return {i: BOSSES[id][0], boss: id, t: `Đánh Boss ${id}: ${BOSSES[id][1]}`, s: "Mock exam 60 câu, 120 phút, giống thi thật.", go: () => go({tab: "mock"})}; }
   return {i: ZONES[weak][0], d: +weak, t: `Cày ${ZONES[weak][1]} (D${weak})`, s: `Vùng yếu nhất: ${DOMAINS[weak][1]} (${pct(ds[weak].c, ds[weak].n)}%).`, go: () => { pf = {d: +weak, s: "", size: 10}; startPractice({}); }};
 }
@@ -661,8 +662,8 @@ function Home() {
   const stars = Object.keys(DOMAINS).reduce((s, k) => s + zoneStars(ds[k]), 0);
   // Map path: zones and bosses in study order. The recommended next node pulses.
   const recD = (step.d != null) ? step.d : null, recB = step.boss || null;
-  const path = [["z", 1], ["z", 2], ["b", 1], ["z", 3], ["z", 4], ["b", 2], ["z", 5], ["b", 3], ["b", 4]];
-  const pos = ["l", "r", "c", "l", "r", "c", "l", "r", "c"];
+  const path = [["z", 1], ["z", 2], ["b", 1], ["z", 3], ["z", 4], ["b", 2], ["z", 5], ["b", 3], ["b", 4], ["b", 5], ["b", 6]];
+  const pos = ["l", "r", "c", "l", "r", "c", "l", "r", "c", "l", "r"];
   const node = ([t, k], i) => {
     if (t === "z") { const z = ZONES[k], x = ds[k], p = pct(x.c, x.n);
       return `<div class="mnode ${pos[i]}"><button data-zone="${k}"><span class="orb ${recD == k ? "rec" : ""}" style="--zc:${z[3]}">${z[0]}</span>
@@ -1172,7 +1173,7 @@ function Listen() {
    <div class="seg" style="grid-template-columns:repeat(4,1fr);margin:6px 0 10px">${CATS.map(([k, n]) => `<button class="${lf.cat === k ? "on" : ""}" data-cat="${k}">${n}</button>`).join("")}</div>
    <div class="chips">${[0, 1, 2, 3, 4, 5].map(d => `<button class="chip ${lf.d === d ? "on" : ""}" data-ld="${d}">${d ? "D" + d : "Tất cả"}</button>`).join("")}
    ${lf.cat === "quiz" ? `<button class="chip ${lf.wrongOnly ? "on" : ""}" id="lW">Câu tôi sai</button>` : ""}</div>
-   ${lf.cat === "quiz" ? `<div class="chips">${[0, 1, 2, 3, 4].map(e => `<button class="chip ${lf.ex === e ? "on" : ""}" data-le="${e}">${e ? "Mock " + e : "Mọi mock"}</button>`).join("")}</div>` : ""}
+   ${lf.cat === "quiz" ? `<div class="chips">${[0, ...EXAMS.map(x => x.id)].map(e => `<button class="chip ${lf.ex === e ? "on" : ""}" data-le="${e}">${e ? "Mock " + e : "Mọi mock"}</button>`).join("")}</div>` : ""}
    <div class="grid2" style="margin:8px 0"><button class="btn" id="lPlay" ${list.length ? "" : "disabled"}>▶ Phát ${list.length} bài${mins ? ` (~${mins} phút)` : ""}</button>
      <button class="btn sec" id="lDl" ${list.length ? "" : "disabled"}>⬇︎ Tải offline</button></div>
    <p class="muted small" id="lDlS"></p>
