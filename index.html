@@ -128,6 +128,15 @@ button.card{width:100%;text-align:left;font:inherit;color:var(--ink);cursor:poin
 .drow .bar{grid-column:1 / -1;height:6px}
 .ck{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;border:2px solid var(--line);margin-right:8px;vertical-align:-5px;font-size:.8rem;font-weight:900;color:#fff}
 .ck.on{background:var(--brand);border-color:var(--brand)}
+.drow:has(+ .tips){border-bottom:0}
+.tips:last-child{border-bottom:0}
+.tips{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:2px 0 10px 38px;border-bottom:1px solid var(--line)}
+.tip{display:flex;align-items:center;gap:5px;max-width:100%;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:4px 10px;font:inherit;font-size:.78rem}
+.tip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;color:var(--muted)}
+.tip i{font-style:normal;font-weight:800}
+.tip.bad{border-color:var(--bad);background:var(--bad-soft)}.tip.bad i{color:var(--bad)}
+.tip.warn{border-color:var(--warn);background:var(--warn-soft)}.tip.warn i{color:var(--warn)}
+.tip.new i{color:var(--muted);font-weight:600}
 .drow.pick1.sel .dl b,.drow.pick1.sel .dl{color:var(--brand);font-weight:700}
 .drow.pick1.sel{background:var(--brand-soft);border-radius:10px;padding-left:8px;padding-right:8px}
 .mocks4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
@@ -538,6 +547,19 @@ const wrongDeck = () => ALL.filter(q => { const r = S.qs[q.id]; return r && r.bo
 const cardKey = g => g[1];
 const dueCards = () => GLOSS.filter(g => { const c = S.cards[cardKey(g)]; return !c || c.due <= today(); });
 
+// Per task statement (e.g. "2.1"): attempts and accuracy, from each question's "t" tag.
+function taskStats() {
+  const m = {}; GUIDE.forEach(g => m[g.id] = {id: g.id, d: g.d, c: 0, n: 0, seen: 0, total: 0});
+  ALL.forEach(q => { const x = m[q.t]; if (!x) return; const r = S.qs[q.id]; x.total++; if (r) { x.seen++; x.c += r.c; x.n += r.n; } });
+  return m;
+}
+// Weak sub-topics of one domain: answered with < 70% correct (weakest first), then untouched ones.
+function reviewTips(d, ts) {
+  const list = GUIDE.filter(g => g.d === d).map(g => ts[g.id]);
+  const weak = list.filter(x => x.n && x.c / x.n < .7).sort((a, b) => a.c / a.n - b.c / b.n || b.n - a.n).slice(0, 3);
+  const fresh = list.filter(x => !x.seen && x.total).slice(0, weak.length >= 2 ? 1 : 2);
+  return {weak, fresh};
+}
 function domainStats() {
   const m = {}; Object.keys(DOMAINS).forEach(d => m[d] = {c: 0, n: 0, seen: 0, total: 0});
   ALL.forEach(q => { const r = S.qs[q.id], x = m[q.d]; x.total++; if (r) { x.seen++; x.c += r.c; x.n += r.n; } });
@@ -776,14 +798,18 @@ const pkAvail = d => ALL.filter(q => q.d === d && (!pk().s || q.s === pk().s)).l
 const pkTotal = () => pkDomains().reduce((t, d) => t + Math.min(pk().per, pkAvail(d)), 0);
 function Practice() {
   if (P) return practiceQ();
-  const due = dueQs().length, ds = domainStats(), k = pk(), sel = k.ds, all = !sel.length, total = pkTotal(), doms = pkDomains();
+  const due = dueQs().length, ds = domainStats(), ts = taskStats(), k = pk(), sel = k.ds, all = !sel.length, total = pkTotal(), doms = pkDomains();
+  const tipHTML = d => { const x = ds[d]; if (!x.n) return ""; const {weak, fresh} = reviewTips(d, ts);
+    if (!weak.length && (pct(x.c, x.n) >= 80 || !fresh.length)) return "";
+    const chip = (t, cls, val) => `<button class="tip ${cls}" data-tip="${t.id}"><b>D${t.id}</b> <span>${esc(GUIDE.find(g => g.id === t.id).vt)}</span><i>${val}</i></button>`;
+    return `<div class="tips"><span class="small muted">💡 Nên ôn (review):</span>${weak.map(t => chip(t, pct(t.c, t.n) < 50 ? "bad" : "warn", pct(t.c, t.n) + "%")).join("")}${fresh.map(t => chip(t, "new", "chưa làm")).join("")}</div>`; };
   $("#app").innerHTML = `${hud()}<h1>⚔️ Luyện tập</h1>
    ${due ? `<button class="card next" id="pRev"><span class="muted small">Đến hạn ôn</span><b>Ôn ${due} câu sai →</b></button>` : ""}
    <h2>Chọn domain <span class="muted small" style="font-weight:500">· chọn nhiều để trộn (mix)</span></h2>
    <div class="card">${[0, 1, 2, 3, 4, 5].map(d => { const on = d ? sel.includes(d) : all;
      return `<button class="drow pick1 ${on ? "sel" : ""}" data-d="${d}" aria-pressed="${on}">
       <span class="dl"><span class="ck ${on ? "on" : ""}">${on ? "✓" : ""}</span>${d ? `${ZONES[d][0]} <b>D${d}</b> ${esc(DOMAINS[d][1])}` : "🌐 <b>Tất cả domain</b>"}</span>
-      <span class="dv">${d ? starsHTML(zoneStars(ds[d])) + " " + (ds[d].n ? pct(ds[d].c, ds[d].n) + "%" : "–") : ""}</span></button>`; }).join("")}</div>
+      <span class="dv">${d ? starsHTML(zoneStars(ds[d])) + " " + (ds[d].n ? pct(ds[d].c, ds[d].n) + "%" : "–") : ""}</span></button>${d ? tipHTML(d) : ""}`; }).join("")}</div>
    <p class="small" style="margin:12px 2px 0"><b>Số câu mỗi domain</b> <span class="muted">(questions per domain)</span></p>
    <div class="seg" style="grid-template-columns:repeat(4,1fr);margin-top:6px">${[5, 10, 15, 20].map(n => `<button class="${k.per === n ? "on" : ""}" data-n="${n}">${n}</button>`).join("")}</div>
    <details class="small" style="margin:10px 2px"><summary>Lọc theo scenario${k.s ? ": " + esc(SCEN[k.s].n) : ""}</summary>
@@ -798,7 +824,21 @@ function Practice() {
   document.querySelectorAll("[data-s]").forEach(b => b.onclick = () => { k.s = b.dataset.s; save(); Practice(); });
   document.querySelectorAll("[data-n]").forEach(b => b.onclick = () => { k.per = +b.dataset.n; save(); const y = window.scrollY; Practice(); window.scrollTo(0, y); });
   if ($("#pRev")) $("#pRev").onclick = () => startPractice({review: true});
+  document.querySelectorAll("[data-tip]").forEach(b => b.onclick = () => tipSheet(b.dataset.tip, ts[b.dataset.tip]));
   $("#pGo").onclick = () => { pf = {ds: pkDomains(), per: k.per, s: k.s}; startPractice({}); };
+}
+function tipSheet(id, x) {
+  const g = GUIDE.find(y => y.id === id), o = document.createElement("div"); o.className = "overlay";
+  o.innerHTML = `<div class="sheet"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Task ${id} · ${ZONES[g.d][0]} D${g.d}</h3><button class="chip" id="tC">Đóng</button></div>
+    <p style="margin:10px 0 2px"><b>${esc(g.title)}</b></p><p class="vn">${esc(g.vt)}</p>
+    <div class="sumbox">${esc(g.sum)}</div>
+    <p class="small muted">${x.n ? `Đã làm ${x.seen}/${x.total} câu · đúng ${pct(x.c, x.n)}% (${x.c}/${x.n} lượt)` : `Chưa làm câu nào (${x.total} câu)`}</p>
+    <div class="grid2"><button class="btn sec" id="tRead">📖 Đọc guide ${id}</button><button class="btn" id="tPr">⚔️ Luyện ${x.total} câu ${id}</button></div></div>`;
+  document.body.appendChild(o);
+  o.onclick = e => { if (e.target === o) o.remove(); };
+  o.querySelector("#tC").onclick = () => o.remove();
+  o.querySelector("#tRead").onclick = () => { o.remove(); S.learnSub = "read"; rf = {cat: "guide", d: 0}; save(); go({tab: "listen", doc: "guide-" + id}); };
+  o.querySelector("#tPr").onclick = () => { o.remove(); pf = {t: id}; startPractice({}); };
 }
 function practicePool() { return ALL.filter(q => (!pf.d || q.d === pf.d) && (!pf.s || q.s === pf.s)); }
 // Unseen and often-wrong questions first, then shuffled.
@@ -807,6 +847,7 @@ function pickWeak(pool, n) { const score = q => { const r = S.qs[q.id]; return !
 function startPractice(o) {
   let list;
   if (o.review) list = shuffle(dueQs()).slice(0, 20);
+  else if (pf.t) list = pickWeak(ALL.filter(q => q.t === pf.t), 99);
   else if (pf.ds) list = shuffle(pf.ds.flatMap(d => pickWeak(ALL.filter(q => q.d === d && (!pf.s || q.s === pf.s)), pf.per)));
   else list = shuffle(pickWeak(practicePool(), pf.size));
   if (!list.length) return toast("Không có câu nào");
