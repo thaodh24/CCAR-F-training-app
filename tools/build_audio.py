@@ -10,7 +10,7 @@ import edge_tts
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = json.load(open(os.path.join(ROOT, "audio", "tracks.json"), encoding="utf-8"))
 VOICE = DATA["voice"]
-SEM = asyncio.Semaphore(int(os.environ.get("TTS_CONCURRENCY", "6")))
+SEM = asyncio.Semaphore(int(os.environ.get("TTS_CONCURRENCY", "2")))
 
 
 def merge(segs):
@@ -27,7 +27,7 @@ def merge(segs):
 
 
 async def tts(text, voice, path):
-    for attempt in range(5):
+    for attempt in range(8):
         try:
             async with SEM:
                 await edge_tts.Communicate(text, voice, rate="-5%").save(path)
@@ -35,7 +35,7 @@ async def tts(text, voice, path):
                 return
         except Exception as e:  # network hiccup: retry with backoff
             print(f"  retry {attempt + 1}: {e}", file=sys.stderr)
-        await asyncio.sleep(2 ** attempt)
+        await asyncio.sleep(min(60, 3 * 2 ** attempt))  # 3, 6, 12, 24, 48, 60... s: give the service time to cool down
     raise RuntimeError(f"TTS failed: {text[:60]}")
 
 
@@ -80,18 +80,36 @@ async def main():
             if f"audio/mp3/{name}" not in keep:
                 os.remove(os.path.join(mp3dir, name))
     done = 0
+    failed = []
 
     async def one(t):
         nonlocal done
-        if await build(t):
-            done += 1
-            print(f"[{done}] {t['title']}", flush=True)
-            return 1
+        try:
+            if await build(t):
+                done += 1
+                print(f"[{done}] {t['title']}", flush=True)
+                return 1
+        except Exception as e:  # one bad track must not sink the whole deploy
+            failed.append(t)
+            print(f"FAILED {t['title']}: {e}", file=sys.stderr, flush=True)
         return 0
 
     made = 0
     for k in range(0, len(tracks), 12):  # several tracks at once; SEM caps the TTS calls in flight
         made += sum(await asyncio.gather(*(one(t) for t in tracks[k:k + 12])))
+    out_env = os.environ.get("GITHUB_OUTPUT")
+    if out_env:  # lets the workflow save the cache only when something new was made
+        with open(out_env, "a") as f:
+            f.write(f"made={made}\n")
+    if failed:
+        # Ship the site without the missing tracks; the next deploy tries them again.
+        bad = {t["id"] for t in failed}
+        total = len(tracks)
+        DATA["tracks"] = tracks = [t for t in tracks if t["id"] not in bad]
+        json.dump(DATA, open(os.path.join(ROOT, "audio", "tracks.json"), "w", encoding="utf-8"), ensure_ascii=False)
+        print(f"WARNING: {len(bad)} track(s) failed and were left out of this deploy", file=sys.stderr)
+        if len(bad) * 2 > total:
+            sys.exit("Too many tracks failed: the TTS service is probably down. Re-run the workflow later.")
     # Durations for the app ("~12 phút") are read from the finished files.
     dur = {}
     for t in tracks:
@@ -102,7 +120,7 @@ async def main():
             if out:
                 dur[t["id"]] = round(float(out))
     json.dump(dur, open(os.path.join(ROOT, "audio", "durations.json"), "w"))
-    print(f"done: {made} new, {len(tracks) - made} cached, {sum(dur.values()) // 60} min total")
+    print(f"done: {made} new, {len(tracks) - made} cached, {len(failed)} failed, {sum(dur.values()) // 60} min total")
 
 
 asyncio.run(main())
